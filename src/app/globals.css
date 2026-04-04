@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* ── Fonts ── */
+@font-face {
+  font-family: 'Chenier';
+  src: url('/fonts/Chenier.woff2') format('woff2'),
+       url('/fonts/Chenier.woff') format('woff'),
+       url('/fonts/Chenier.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ── Design Tokens ── */
 :root {
   --bg-deep: #0e0c0a;
@@ -32,7 +43,7 @@
   --color-rule: var(--rule);
   --color-border: var(--border);
 
-  --font-display: 'Playfair Display', Georgia, serif;
+  --font-display: 'Chenier', Georgia, serif;
   --font-label: 'Barlow Condensed', sans-serif;
   --font-body: 'Source Serif 4', Georgia, serif;
 }
