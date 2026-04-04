@@ -22,6 +22,21 @@ function getStatusFromStripe(
   return "past_due"; // past_due, unpaid, incomplete, etc.
 }
 
+/**
+ * Stripe API 2026-03-25.dahlia moved current_period_end off the top-level
+ * Subscription type. Access it via the raw object to handle the API version.
+ */
+function getPeriodEnd(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  sub: any
+): string | null {
+  const seconds: number | undefined =
+    sub?.current_period_end ?? sub?.items?.data?.[0]?.current_period_end;
+  return typeof seconds === "number"
+    ? new Date(seconds * 1000).toISOString()
+    : null;
+}
+
 export async function POST(request: Request) {
   const stripe = getStripe();
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -70,9 +85,7 @@ export async function POST(request: Request) {
       );
       const priceId = subscription.items.data[0]?.price.id ?? "";
       const plan = getPlanFromPriceId(priceId);
-      const currentPeriodEnd = new Date(
-        subscription.current_period_end * 1000
-      ).toISOString();
+      const currentPeriodEnd = getPeriodEnd(subscription);
 
       await supabase.from("subscribers").upsert(
         {
@@ -95,9 +108,7 @@ export async function POST(request: Request) {
       const priceId = subscription.items.data[0]?.price.id ?? "";
       const plan = getPlanFromPriceId(priceId);
       const status = getStatusFromStripe(subscription.status);
-      const currentPeriodEnd = new Date(
-        subscription.current_period_end * 1000
-      ).toISOString();
+      const currentPeriodEnd = getPeriodEnd(subscription);
 
       await supabase
         .from("subscribers")
