@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { createClient } from "@/lib/supabase/server";
 
 function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -13,6 +14,16 @@ const PRICE_IDS: Record<string, string | undefined> = {
 };
 
 export async function POST(request: Request) {
+  // Require authenticated user
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Sign in to subscribe." }, { status: 401 });
+  }
+
   let plan: string;
   try {
     const body = await request.json();
@@ -37,11 +48,31 @@ export async function POST(request: Request) {
 
   try {
     const stripe = getStripe();
+
+    // Look up or create a Stripe customer for this user so we can link them
+    const { data: existingSubscriber } = await supabase
+      .from("subscribers")
+      .select("stripe_customer_id")
+      .eq("user_id", user.id)
+      .single();
+
+    let customerId = existingSubscriber?.stripe_customer_id ?? undefined;
+
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: user.email,
+        metadata: { supabase_user_id: user.id },
+      });
+      customerId = customer.id;
+    }
+
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
+      customer: customerId,
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${baseUrl}/subscribe?success=true`,
+      metadata: { supabase_user_id: user.id },
+      success_url: `${baseUrl}/account?subscribed=true`,
       cancel_url: `${baseUrl}/subscribe?canceled=true`,
     });
 

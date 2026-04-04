@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface SubscribeButtonProps {
   plan: "descender" | "patron";
@@ -9,6 +10,7 @@ interface SubscribeButtonProps {
 }
 
 export function SubscribeButton({ plan, label, featured = false }: SubscribeButtonProps) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,6 +24,13 @@ export function SubscribeButton({ plan, label, featured = false }: SubscribeButt
         body: JSON.stringify({ plan }),
       });
       const data = await res.json();
+
+      if (res.status === 401) {
+        // Not signed in — send to signup with subscribe redirect
+        router.push(`/signup?redirect=${encodeURIComponent("/subscribe")}`);
+        return;
+      }
+
       if (!res.ok) throw new Error(data.error ?? "Checkout failed");
       window.location.href = data.url;
     } catch (err) {

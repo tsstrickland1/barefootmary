@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
 
 const navLinks = [
   { href: "/episodes", label: "Episodes" },
@@ -18,7 +20,17 @@ const rightNavLinks = navLinks.slice(2);
 
 export function Nav() {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Close menu on route change
   useEffect(() => {
@@ -97,6 +109,25 @@ export function Nav() {
               {link.label}
             </Link>
           ))}
+          {user ? (
+            <Link
+              href="/account"
+              className={`font-label text-xs font-medium tracking-[0.2em] uppercase no-underline whitespace-nowrap transition-colors duration-200 ${
+                pathname.startsWith("/account")
+                  ? "text-cream"
+                  : "text-cream-dim hover:text-cream"
+              }`}
+            >
+              Account
+            </Link>
+          ) : (
+            <Link
+              href={`/login?redirect=${encodeURIComponent(pathname)}`}
+              className="font-label text-xs font-medium tracking-[0.2em] uppercase no-underline whitespace-nowrap text-cream-dim hover:text-cream transition-colors duration-200"
+            >
+              Sign In
+            </Link>
+          )}
           <Link
             href="/subscribe"
             className="font-label text-[0.7rem] font-semibold tracking-[0.18em] uppercase text-bg-deep bg-amber px-5 py-2 no-underline transition-colors duration-200 hover:bg-amber-light whitespace-nowrap ml-2"
@@ -145,8 +176,8 @@ export function Nav() {
             ))}
           </nav>
 
-          {/* Bottom CTA */}
-          <div className="px-6 py-8">
+          {/* Bottom CTAs */}
+          <div className="px-6 py-8 flex flex-col gap-3">
             <Link
               href="/subscribe"
               className="block w-full text-center font-label text-[0.72rem] font-semibold tracking-[0.18em] uppercase text-bg-deep bg-amber py-4 no-underline transition-colors duration-200 hover:bg-amber-light"
@@ -154,6 +185,23 @@ export function Nav() {
             >
               Subscribe
             </Link>
+            {user ? (
+              <Link
+                href="/account"
+                className="block w-full text-center font-label text-[0.7rem] tracking-[0.18em] uppercase text-cream-dim border border-border py-3 no-underline hover:text-cream transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                Account
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="block w-full text-center font-label text-[0.7rem] tracking-[0.18em] uppercase text-cream-dim border border-border py-3 no-underline hover:text-cream transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                Sign In
+              </Link>
+            )}
           </div>
         </div>
       )}
