@@ -1,0 +1,145 @@
+import { notFound } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { AdminFormField } from "@/components/admin/AdminFormField";
+import { updateArchiveItem } from "@/app/admin/_actions/archive";
+import type { Season, Episode } from "@/types/database";
+
+export const metadata = { title: "Admin — Edit Archive Item" };
+
+export default async function EditArchiveItemPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const supabase = await createClient();
+  const [{ data: item }, { data: seasons }, { data: episodes }] =
+    await Promise.all([
+      supabase.from("archive_items").select("*").eq("id", id).single(),
+      supabase.from("seasons").select("id, title").order("number"),
+      supabase.from("episodes").select("id, title, season_id").order("number"),
+    ]);
+
+  if (!item) notFound();
+
+  const seasonList = (seasons as Pick<Season, "id" | "title">[] ?? []);
+  const episodeList = (episodes as Pick<Episode, "id" | "title" | "season_id">[] ?? []);
+
+  return (
+    <div className="px-10 py-10 max-w-2xl">
+      <h1 className="font-display text-[2rem] font-light text-cream leading-none mb-8">
+        Edit Archive Item
+      </h1>
+
+      <form action={updateArchiveItem} className="flex flex-col gap-6">
+        <input type="hidden" name="id" value={item.id} />
+
+        <AdminFormField label="Title" name="title">
+          <input
+            id="title"
+            name="title"
+            type="text"
+            required
+            defaultValue={item.title}
+            className="form-input"
+          />
+        </AdminFormField>
+
+        <AdminFormField label="Description" name="description">
+          <textarea
+            id="description"
+            name="description"
+            rows={3}
+            defaultValue={item.description ?? ""}
+            className="form-input"
+          />
+        </AdminFormField>
+
+        <div className="grid grid-cols-2 gap-6">
+          <AdminFormField label="Type" name="type">
+            <select
+              id="type"
+              name="type"
+              required
+              defaultValue={item.type}
+              className="form-input"
+            >
+              <option value="pdf">PDF</option>
+              <option value="image">Image</option>
+              <option value="audio">Audio</option>
+              <option value="transcript">Transcript</option>
+            </select>
+          </AdminFormField>
+
+          <AdminFormField label="Visibility" name="visibility">
+            <select
+              id="visibility"
+              name="visibility"
+              required
+              defaultValue={item.visibility}
+              className="form-input"
+            >
+              <option value="public">Public</option>
+              <option value="subscriber">Subscriber</option>
+              <option value="patron">Patron</option>
+            </select>
+          </AdminFormField>
+        </div>
+
+        <AdminFormField label="File Path" name="file_path" hint="Storage path, e.g. archive/document.pdf">
+          <input
+            id="file_path"
+            name="file_path"
+            type="text"
+            required
+            defaultValue={item.file_path}
+            className="form-input"
+          />
+        </AdminFormField>
+
+        <AdminFormField label="Related Season" name="season_id">
+          <select
+            id="season_id"
+            name="season_id"
+            defaultValue={item.season_id ?? ""}
+            className="form-input"
+          >
+            <option value="">None</option>
+            {seasonList.map((s) => (
+              <option key={s.id} value={s.id}>{s.title}</option>
+            ))}
+          </select>
+        </AdminFormField>
+
+        <AdminFormField label="Related Episode" name="episode_id">
+          <select
+            id="episode_id"
+            name="episode_id"
+            defaultValue={item.episode_id ?? ""}
+            className="form-input"
+          >
+            <option value="">None</option>
+            {episodeList.map((e) => (
+              <option key={e.id} value={e.id}>{e.title}</option>
+            ))}
+          </select>
+        </AdminFormField>
+
+        <div className="flex gap-4 pt-2">
+          <button
+            type="submit"
+            className="bg-amber text-bg-deep font-label text-[0.75rem] font-semibold tracking-[0.18em] uppercase px-6 py-3 transition-opacity hover:opacity-80"
+          >
+            Save Changes
+          </button>
+          <a
+            href="/admin/archive"
+            className="font-label text-[0.75rem] tracking-[0.15em] uppercase text-cream-dim hover:text-cream transition-colors no-underline px-6 py-3"
+          >
+            Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  );
+}
