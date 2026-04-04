@@ -1,4 +1,5 @@
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { StoryForm } from "@/components/share-your-story/StoryForm";
 
 export const metadata = {
   title: "Share Your Story — Barefoot Mary",
@@ -23,81 +24,7 @@ export default function ShareYourStoryPage() {
             and you choose how you&apos;re credited.
           </p>
 
-          <form className="flex flex-col gap-3.5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div className="flex flex-col gap-1.5">
-                <label className="font-label text-[0.62rem] font-medium tracking-[0.16em] uppercase text-amber">
-                  Your Name
-                </label>
-                <input
-                  className="form-input"
-                  type="text"
-                  name="name"
-                  placeholder="How you'd like to be credited"
-                  required
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="font-label text-[0.62rem] font-medium tracking-[0.16em] uppercase text-amber">
-                  Email (optional)
-                </label>
-                <input
-                  className="form-input"
-                  type="email"
-                  name="email"
-                  placeholder="For follow-up only"
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="font-label text-[0.62rem] font-medium tracking-[0.16em] uppercase text-amber">
-                Briefly describe your story
-              </label>
-              <textarea
-                className="form-input"
-                name="description"
-                placeholder="What will you tell us? Where does it take place?"
-                required
-              />
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="font-label text-[0.62rem] font-medium tracking-[0.16em] uppercase text-amber">
-                Record Your Story
-              </label>
-              <button
-                type="button"
-                className="flex items-center justify-center gap-3.5 py-4 px-4 bg-bg-deep border border-dashed border-[rgba(196,154,60,0.35)] text-cream font-label text-[0.72rem] tracking-[0.18em] uppercase cursor-pointer transition-all duration-200 w-full hover:border-amber hover:bg-[rgba(196,154,60,0.03)]"
-              >
-                <span className="w-2.5 h-2.5 rounded-full bg-[#c44c3c] shrink-0" />
-                Record Now in Your Browser
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="font-label text-[0.6rem] tracking-[0.06em] text-cream-dim">
-                Or upload a file — .mp3, .wav, .m4a up to 100 MB
-              </label>
-              <input
-                className="form-input italic text-[rgba(158,146,120,0.5)]"
-                type="file"
-                name="audio"
-                accept=".mp3,.wav,.m4a"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="bg-amber text-bg-deep border-none py-3.5 px-8 font-label text-[0.72rem] font-semibold tracking-[0.18em] uppercase cursor-pointer w-full transition-colors duration-200 hover:bg-amber-light mt-1"
-            >
-              Submit Your Story →
-            </button>
-            <p className="font-label text-[0.58rem] text-[rgba(158,146,120,0.55)] tracking-[0.06em] text-center">
-              Submissions are reviewed before any use. Your privacy is respected.
-              See our full consent policy.
-            </p>
-          </form>
+          <StoryForm />
         </div>
 
         {/* Visual column */}

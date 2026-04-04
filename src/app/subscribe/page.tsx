@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SubscribeButton } from "@/components/subscribe/SubscribeButton";
 
 export const metadata = {
   title: "Subscribe — Barefoot Mary",
@@ -7,20 +7,9 @@ export const metadata = {
 
 const tiers = [
   {
-    label: "Free",
-    price: "$0",
-    features: [
-      "First two episodes per season",
-      "Free Field Notes articles",
-      "Archive catalog preview",
-      "Submit oral histories",
-    ],
-    cta: "Listen for Free",
-    featured: false,
-  },
-  {
     label: "Descender",
     price: "$8",
+    plan: "descender" as const,
     features: [
       "All episodes, all seasons",
       "Complete Field Notes archive",
@@ -34,6 +23,7 @@ const tiers = [
   {
     label: "Patron",
     price: "$25",
+    plan: "patron" as const,
     features: [
       "Everything in Descender",
       "Credit in episode roll",
@@ -63,11 +53,11 @@ export default function SubscribePage() {
       </div>
 
       {/* Tier cards */}
-      <div className="flex flex-wrap justify-center gap-px bg-border border border-border max-w-3xl mx-auto">
+      <div className="flex flex-wrap justify-center gap-px bg-border border border-border max-w-2xl mx-auto">
         {tiers.map((tier) => (
           <div
             key={tier.label}
-            className={`p-10 flex flex-col gap-3 min-w-[210px] flex-1 text-left ${
+            className={`p-10 flex flex-col gap-3 min-w-[240px] flex-1 text-left ${
               tier.featured
                 ? "bg-bg-raised border-t-2 border-t-amber"
                 : "bg-bg-deep"
@@ -93,20 +83,19 @@ export default function SubscribePage() {
                 </li>
               ))}
             </ul>
-            <button
-              className={`block w-full py-3 px-4 text-center font-label text-[0.68rem] font-semibold tracking-[0.15em] uppercase cursor-pointer transition-all duration-200 mt-auto ${
-                tier.featured
-                  ? "bg-amber text-bg-deep border border-amber hover:bg-amber-light"
-                  : "bg-transparent text-cream-dim border border-border hover:border-amber hover:text-amber"
-              }`}
-            >
-              {tier.cta}
-            </button>
+            <SubscribeButton plan={tier.plan} label={tier.cta} featured={tier.featured} />
           </div>
         ))}
       </div>
 
-      {/* FAQ / Additional info */}
+      {/* Success / canceled notice */}
+      <div className="max-w-2xl mx-auto mt-8 text-center">
+        <p className="font-label text-[0.65rem] tracking-[0.1em] text-cream-dim">
+          Public episodes and articles remain freely accessible without a subscription.
+        </p>
+      </div>
+
+      {/* FAQ */}
       <div className="max-w-2xl mx-auto mt-20 space-y-8">
         <h2 className="font-display text-[1.6rem] font-light italic text-cream text-center">
           Frequently Asked Questions

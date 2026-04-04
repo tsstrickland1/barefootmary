@@ -8,6 +8,7 @@ export const sampleEpisodes = [
     visibility: "public" as const,
     slug: "door-to-the-seven-gates",
     seasonSlug: "season-1",
+    image_url: null,
   },
   {
     number: 1,
@@ -18,6 +19,7 @@ export const sampleEpisodes = [
     visibility: "public" as const,
     slug: "janus-faced-john",
     seasonSlug: "season-1",
+    image_url: null,
   },
   {
     number: 2,
@@ -28,6 +30,7 @@ export const sampleEpisodes = [
     visibility: "subscriber" as const,
     slug: "lost-causeway",
     seasonSlug: "season-1",
+    image_url: null,
   },
   {
     number: 3,
@@ -38,6 +41,7 @@ export const sampleEpisodes = [
     visibility: "subscriber" as const,
     slug: "shadow-of-the-light",
     seasonSlug: "season-1",
+    image_url: null,
   },
   {
     number: 4,
@@ -48,6 +52,7 @@ export const sampleEpisodes = [
     visibility: "subscriber" as const,
     slug: "rite-of-passage",
     seasonSlug: "season-1",
+    image_url: null,
   },
   {
     number: 5,
@@ -58,6 +63,7 @@ export const sampleEpisodes = [
     visibility: "subscriber" as const,
     slug: "tunnel-of-love",
     seasonSlug: "season-1",
+    image_url: null,
   },
 ];
 
@@ -71,6 +77,7 @@ export const sampleArticles = [
     tagType: "free" as const,
     byline: "T.S. Strickland · April 2025 · 12 min read",
     featured: true,
+    image_url: null,
   },
   {
     slug: "1978-spot-investigation",
@@ -80,6 +87,7 @@ export const sampleArticles = [
     tagType: "locked" as const,
     byline: "Pensacola News Journal · 1978 · Annotated",
     featured: false,
+    image_url: null,
   },
   {
     slug: "inanna-at-fort-pickens",
@@ -89,6 +97,7 @@ export const sampleArticles = [
     tagType: "locked" as const,
     byline: "T.S. Strickland · March 2025",
     featured: false,
+    image_url: null,
   },
   {
     slug: "talking-to-the-believers",
@@ -98,6 +107,7 @@ export const sampleArticles = [
     tagType: "free" as const,
     byline: "T.S. Strickland · February 2025",
     featured: false,
+    image_url: null,
   },
   {
     slug: "underground-railroad-gulf-coast",
@@ -107,6 +117,7 @@ export const sampleArticles = [
     tagType: "locked" as const,
     byline: "T.S. Strickland · January 2025",
     featured: false,
+    image_url: null,
   },
 ];
 
@@ -115,28 +126,44 @@ export const sampleArchiveItems = [
     id: "1",
     type: "PDF",
     title: "Fort Pickens Structural Survey, U.S. Army Corps of Engineers, 1903",
+    description:
+      "A detailed structural survey of Fort Pickens conducted by the U.S. Army Corps of Engineers in 1903, documenting the condition of the fort's walls, bastions, and subterranean passages.",
     visibility: "public" as const,
     episode: "Episode 0",
+    slug: "fort-pickens-structural-survey-1903",
+    file_path: "/sample/fort-pickens-survey.pdf",
   },
   {
     id: "2",
     type: "IMG",
     title: "Innerarity House Floor Plan, Spanish Colonial Period (annotated)",
+    description:
+      "A hand-drawn floor plan of the Innerarity House from the Spanish Colonial period, with annotations identifying the locations of disputed tunnel entrances and structural anomalies.",
     visibility: "subscriber" as const,
     episode: "Episode 1",
+    slug: "innerarity-house-floor-plan",
+    file_path: "/sample/innerarity-floor-plan.jpg",
   },
   {
     id: "3",
     type: "AUD",
     title: "Oral History Interview: Eleanor Whitfield, age 84 (unedited, 47 min)",
+    description:
+      "Unedited oral history interview with Eleanor Whitfield, a lifelong Pensacola resident whose family has passed down accounts of underground passages beneath the historic district for three generations.",
     visibility: "subscriber" as const,
     episode: "Episode 1",
+    slug: "oral-history-eleanor-whitfield",
+    file_path: "/sample/whitfield-interview.mp3",
   },
   {
     id: "4",
     type: "PDF",
     title: "Pensacola News Journal SPOT Coverage, Nov–Dec 1978 (complete clippings)",
+    description:
+      "The complete set of Pensacola News Journal clippings covering the 1978 SPOT (Special Places of Terror) investigation, including reader letters, follow-up reporting, and editorial responses.",
     visibility: "subscriber" as const,
     episode: "Episode 0",
+    slug: "pnj-spot-coverage-1978",
+    file_path: "/sample/pnj-spot-1978.pdf",
   },
 ];
