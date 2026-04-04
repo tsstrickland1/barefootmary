@@ -5,7 +5,7 @@ export function Nav() {
   return (
     <nav className="sticky top-0 z-100 flex items-center justify-between px-12 py-5 bg-[rgba(14,12,10,0.94)] backdrop-blur-[10px] border-b border-border">
       <Link href="/" className="no-underline">
-        <Image src="/logo.svg" alt="Barefoot Mary" width={180} height={48} priority />
+        <Image src="/logo.svg" alt="Barefoot Mary" width={130} height={35} priority />
       </Link>
 
       <ul className="hidden md:flex gap-10 list-none">

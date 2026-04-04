@@ -32,7 +32,7 @@
   --color-rule: var(--rule);
   --color-border: var(--border);
 
-  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-display: 'Playfair Display', Georgia, serif;
   --font-label: 'Barlow Condensed', sans-serif;
   --font-body: 'Source Serif 4', Georgia, serif;
 }
