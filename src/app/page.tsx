@@ -15,7 +15,7 @@ export default function HomePage() {
   return (
     <>
       {/* ── Hero ── */}
-      <header className="min-h-[90vh] flex flex-col justify-end px-12 pb-20 relative border-b border-rule overflow-hidden max-md:px-6 max-md:min-h-[70vh]">
+      <header className="min-h-[90vh] flex flex-col justify-end px-12 pb-20 relative border-b border-rule overflow-hidden max-md:px-6 max-md:min-h-[70vh] max-md:pt-16">
         <div className="absolute top-[-8%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse,rgba(196,154,60,0.05)_0%,transparent_68%)] pointer-events-none" />
 
         <div className="font-label text-[0.68rem] font-medium tracking-[0.28em] uppercase text-amber mb-5">
