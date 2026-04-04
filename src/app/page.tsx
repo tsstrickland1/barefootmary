@@ -17,11 +17,6 @@ export default function HomePage() {
       <header className="min-h-[90vh] flex flex-col justify-end px-12 pb-20 relative border-b border-rule overflow-hidden max-md:px-6 max-md:min-h-[70vh]">
         <div className="absolute top-[-8%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse,rgba(196,154,60,0.05)_0%,transparent_68%)] pointer-events-none" />
 
-        <div className="absolute top-12 left-12 right-12 flex flex-col gap-[5px]">
-          <span className="block h-px bg-[rgba(196,154,60,0.35)]" />
-          <span className="block h-px bg-rule" />
-        </div>
-
         <div className="font-label text-[0.68rem] font-medium tracking-[0.28em] uppercase text-amber mb-5">
           Investigative History · Pensacola &amp; the Gulf Coast
         </div>
