@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+/* ── Design Tokens ── */
+:root {
+  --bg-deep: #0e0c0a;
+  --bg-surface: #191612;
+  --bg-raised: #201d18;
+  --amber: #c49a3c;
+  --amber-light: #d4b06a;
+  --amber-dim: rgba(196, 154, 60, 0.4);
+  --cream: #e8dfc8;
+  --cream-dim: #9e9278;
+  --cream-faint: rgba(232, 223, 200, 0.06);
+  --teal: #4a7c74;
+  --teal-light: #6aaca2;
+  --rule: rgba(196, 154, 60, 0.18);
+  --border: rgba(232, 223, 200, 0.09);
+}
+
+@theme inline {
+  --color-bg-deep: var(--bg-deep);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-raised: var(--bg-raised);
+  --color-amber: var(--amber);
+  --color-amber-light: var(--amber-light);
+  --color-amber-dim: var(--amber-dim);
+  --color-cream: var(--cream);
+  --color-cream-dim: var(--cream-dim);
+  --color-cream-faint: var(--cream-faint);
+  --color-teal: var(--teal);
+  --color-teal-light: var(--teal-light);
+  --color-rule: var(--rule);
+  --color-border: var(--border);
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-label: 'Barlow Condensed', sans-serif;
+  --font-body: 'Source Serif 4', Georgia, serif;
+}
+
+/* ── Global Styles ── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg-deep);
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* Film grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.028;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* ── Form Styles ── */
+.form-input {
+  background: rgba(232, 223, 200, 0.04);
+  border: 1px solid var(--border);
+  color: var(--cream);
+  padding: 0.6rem 0.875rem;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.form-input:focus {
+  border-color: var(--amber-dim);
+}
+
+.form-input::placeholder {
+  color: rgba(158, 146, 120, 0.5);
+}
+
+textarea.form-input {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ── Utility Classes ── */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-label {
+  font-family: var(--font-label);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}

@@ -1,0 +1,483 @@
+import Link from "next/link";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import { EpisodeCard } from "@/components/episodes/EpisodeCard";
+import {
+  sampleEpisodes,
+  sampleArticles,
+  sampleArchiveItems,
+} from "@/lib/sample-data";
+
+export default function HomePage() {
+  const featured = sampleArticles.find((a) => a.featured);
+  const sidebar = sampleArticles.filter((a) => !a.featured);
+
+  return (
+    <>
+      {/* ── Hero ── */}
+      <header className="min-h-[90vh] flex flex-col justify-end px-12 pb-20 relative border-b border-rule overflow-hidden max-md:px-6 max-md:min-h-[70vh]">
+        <div className="absolute top-[-8%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse,rgba(196,154,60,0.05)_0%,transparent_68%)] pointer-events-none" />
+
+        <div className="absolute top-12 left-12 right-12 flex flex-col gap-[5px]">
+          <span className="block h-px bg-[rgba(196,154,60,0.35)]" />
+          <span className="block h-px bg-rule" />
+        </div>
+
+        <div className="font-label text-[0.68rem] font-medium tracking-[0.28em] uppercase text-amber mb-5">
+          Investigative History · Pensacola &amp; the Gulf Coast
+        </div>
+
+        <h1 className="font-display text-[clamp(4rem,9.5vw,9rem)] font-light leading-[0.88] text-cream tracking-[-0.015em] mb-9 max-w-[1000px] max-md:text-[3.5rem]">
+          Barefoot
+          <br />
+          <em className="italic text-amber">Mary</em>
+        </h1>
+
+        <div className="flex items-center gap-10 flex-wrap">
+          <p className="font-body text-[0.95rem] font-light italic text-cream-dim max-w-[380px] leading-[1.6]">
+            Half-remembered events, overlooked histories, and the persistent
+            local legends that shape how communities understand themselves.
+          </p>
+
+          <Link
+            href="/episodes/season-1/door-to-the-seven-gates"
+            className="flex items-center gap-5 no-underline px-7 py-[0.9rem] border border-amber-dim text-cream transition-all duration-[250ms] shrink-0 hover:bg-cream-faint hover:border-amber"
+          >
+            <div className="w-[38px] h-[38px] border-[1.5px] border-amber rounded-full flex items-center justify-center shrink-0">
+              <span className="w-0 h-0 border-solid border-y-[5px] border-y-transparent border-l-[9px] border-l-amber ml-[2px]" />
+            </div>
+            <div className="flex flex-col gap-[2px]">
+              <span className="font-label text-[0.6rem] tracking-[0.22em] uppercase text-amber font-medium">
+                Latest Episode
+              </span>
+              <span className="font-display text-[1.05rem] font-normal text-cream leading-[1.2]">
+                Door to the Seven Gates
+              </span>
+            </div>
+          </Link>
+
+          <div className="flex gap-3 flex-wrap mt-1">
+            {["Apple Podcasts", "Spotify", "RSS Feed"].map((platform) => (
+              <a
+                key={platform}
+                href="#"
+                className="font-label text-[0.63rem] font-medium tracking-[0.14em] uppercase text-cream-dim bg-[rgba(232,223,200,0.04)] border border-border px-3.5 py-1.5 no-underline transition-all duration-200 hover:text-cream hover:bg-[rgba(232,223,200,0.08)]"
+              >
+                {platform}
+              </a>
+            ))}
+          </div>
+        </div>
+      </header>
+
+      {/* ── Current Season ── */}
+      <section className="px-12 py-20 border-b border-border max-md:px-6 max-md:py-12">
+        <SectionHeader
+          label="Now Airing"
+          title="Current Season"
+          linkText="All Seasons →"
+          linkHref="/episodes"
+        />
+
+        <div className="bg-bg-surface border border-border p-12 grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative overflow-hidden max-md:p-6">
+          <span className="absolute right-[-0.08em] top-[-0.2em] font-display text-[20rem] font-light text-[rgba(196,154,60,0.035)] leading-none pointer-events-none select-none">
+            I
+          </span>
+
+          <div>
+            <div className="font-label text-[0.65rem] font-semibold tracking-[0.22em] uppercase text-teal-light mb-3">
+              Season One
+            </div>
+            <div className="font-display text-[3.5rem] font-light text-cream leading-none mb-3 max-md:text-[2.5rem]">
+              Tunnel Vision
+            </div>
+            <div className="font-display text-[1.1rem] font-light italic text-teal-light mb-6">
+              A descent through Pensacola&apos;s hidden underground
+            </div>
+            <p className="text-[0.88rem] text-cream-dim leading-[1.85] font-body max-w-[460px]">
+              Stories of secret passageways surface again and again in local
+              memory—beneath forts, waterfront homes, and civic buildings.
+              Tunnel Vision follows these legends site by site, asking not only
+              whether particular tunnels ever existed as claimed, but why the
+              idea of hidden passages has proven so durable across generations
+              and what work they do for the people who keep telling them.
+            </p>
+          </div>
+
+          <div className="flex flex-col">
+            {[
+              { num: "9", label: "Episodes in the descent" },
+              { num: "7", label: "Sites investigated" },
+              { num: "~42", label: "Minutes per episode" },
+            ].map((stat, i, arr) => (
+              <div
+                key={stat.label}
+                className={`flex items-baseline gap-5 py-5 ${
+                  i < arr.length - 1 ? "border-b border-border" : ""
+                }`}
+              >
+                <div className="font-display text-[3rem] font-light text-amber leading-none min-w-[72px]">
+                  {stat.num}
+                </div>
+                <div className="font-label text-[0.78rem] tracking-[0.1em] uppercase text-cream-dim">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Episodes ── */}
+      <section className="px-12 py-20 border-b border-border max-md:px-6 max-md:py-12">
+        <SectionHeader
+          label="Season One · Tunnel Vision"
+          title="Episodes"
+          linkText="Full Archive →"
+          linkHref="/episodes/season-1"
+        />
+
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-px bg-border border border-border">
+          {sampleEpisodes.map((ep) => (
+            <EpisodeCard key={ep.slug} ep={ep} />
+          ))}
+        </div>
+      </section>
+
+      {/* ── Field Notes ── */}
+      <section className="px-12 py-20 border-b border-border max-md:px-6 max-md:py-12">
+        <SectionHeader
+          label="Research & Writing"
+          title="Field Notes"
+          linkText="All Articles →"
+          linkHref="/field-notes"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-px bg-border border border-border">
+          {featured && (
+            <Link
+              href={`/field-notes/${featured.slug}`}
+              className="bg-bg-surface p-10 flex flex-col gap-4 transition-colors duration-200 cursor-pointer no-underline text-inherit hover:bg-bg-raised"
+            >
+              <div className="font-label text-[0.6rem] font-semibold tracking-[0.16em] uppercase text-teal-light">
+                {featured.tag}
+              </div>
+              <div className="font-display text-[1.55rem] font-normal text-cream leading-[1.2]">
+                {featured.title}
+              </div>
+              <p className="text-[0.84rem] text-cream-dim leading-[1.75] font-body">
+                {featured.excerpt}
+              </p>
+              <div className="font-label text-[0.62rem] tracking-[0.1em] text-cream-dim mt-auto">
+                {featured.byline}
+              </div>
+            </Link>
+          )}
+
+          <div className="bg-bg-surface flex flex-col">
+            {sidebar.map((article, i) => (
+              <Link
+                key={article.slug}
+                href={`/field-notes/${article.slug}`}
+                className={`p-6 flex flex-col gap-2 cursor-pointer transition-colors duration-200 no-underline text-inherit hover:bg-bg-raised ${
+                  i < sidebar.length - 1 ? "border-b border-border" : ""
+                }`}
+              >
+                <div
+                  className={`font-label text-[0.6rem] font-semibold tracking-[0.16em] uppercase flex items-center gap-1.5 ${
+                    article.tagType === "free"
+                      ? "text-teal-light"
+                      : "text-amber"
+                  }`}
+                >
+                  {article.tagType === "locked" && (
+                    <span className="inline-flex items-center justify-center w-[13px] h-[13px] border border-amber-dim text-[8px] leading-none rounded-sm">
+                      🔒
+                    </span>
+                  )}
+                  {article.tag}
+                </div>
+                <div className="font-display text-[1.05rem] font-normal text-cream leading-[1.25]">
+                  {article.title}
+                </div>
+                <div className="font-label text-[0.62rem] tracking-[0.1em] text-cream-dim">
+                  {article.byline}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── The Archive ── */}
+      <section className="px-12 py-20 border-b border-border max-md:px-6 max-md:py-12">
+        <SectionHeader
+          label="Primary Sources"
+          title="The Archive"
+          linkText="Browse All →"
+          linkHref="/archive"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start mb-12">
+          <p className="font-display text-[1.85rem] font-light text-cream leading-[1.1] italic">
+            Documents, maps, photographs, and recordings gathered in the course
+            of investigation.
+          </p>
+          <div>
+            <p className="text-[0.88rem] text-cream-dim leading-[1.88] font-body italic">
+              We believe in showing our work. The Archive holds the primary
+              materials that drive each episode—survey plans, oral history
+              recordings, newspaper clippings, and annotated photographs.
+              Subscriber access unlocks full documents and audio; all users can
+              browse the catalog.
+            </p>
+            <div className="grid grid-cols-2 gap-4 mt-6">
+              {[
+                { icon: "PDF", label: "Documents & Plans" },
+                { icon: "IMG", label: "Photographs & Maps" },
+                { icon: "AUD", label: "Oral History Audio" },
+                { icon: "TXT", label: "Transcripts & Notes" },
+              ].map((type) => (
+                <div
+                  key={type.icon}
+                  className="bg-bg-surface border border-border p-4 flex items-center gap-4"
+                >
+                  <div className="w-10 h-10 border border-border flex items-center justify-center shrink-0 font-label text-[0.58rem] tracking-[0.1em] text-amber uppercase">
+                    {type.icon}
+                  </div>
+                  <div className="font-label text-[0.72rem] tracking-[0.1em] uppercase text-cream-dim">
+                    {type.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border">
+          {sampleArchiveItems.map((item) => (
+            <div
+              key={item.id}
+              className="bg-bg-surface p-6 flex flex-col gap-2 cursor-pointer transition-colors duration-200 min-h-[140px] hover:bg-bg-raised"
+            >
+              <div
+                className={`font-label text-[0.58rem] font-semibold tracking-[0.15em] uppercase flex items-center gap-1.5 ${
+                  item.visibility === "public" ? "text-teal-light" : "text-amber"
+                }`}
+              >
+                {item.visibility === "public" ? (
+                  <>Free · {item.type}</>
+                ) : (
+                  <>🔒 Subscriber · {item.type}</>
+                )}
+              </div>
+              <div className="font-display text-[0.95rem] font-normal text-cream leading-[1.35]">
+                {item.title}
+              </div>
+              <div className="font-label text-[0.58rem] text-cream-dim mt-auto">
+                Ref: {item.episode}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Share Your Story ── */}
+      <section className="px-12 py-20 border-b border-border max-md:px-6 max-md:py-12">
+        <SectionHeader
+          label="Oral History Contribution"
+          title="Share Your Story"
+        />
+
+        <div className="bg-bg-surface border border-border p-14 grid grid-cols-1 md:grid-cols-2 gap-16 items-start max-md:p-6">
+          <div>
+            <div className="font-display text-[2.6rem] font-light italic text-cream leading-[1.1] mb-3.5">
+              Have you heard the stories?
+            </div>
+            <p className="text-[0.87rem] text-cream-dim leading-[1.88] mb-8 font-body">
+              Barefoot Mary is built on the belief that the best history lives
+              in living memory. If you have a story about Pensacola&apos;s
+              tunnels—or any Gulf Coast legend—we want to hear it. Record
+              directly in your browser, or upload a file. All submissions are
+              reviewed before use, and you choose how you&apos;re credited.
+            </p>
+
+            <div className="flex flex-col gap-3.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div className="flex flex-col gap-1.5">
+                  <label className="font-label text-[0.62rem] font-medium tracking-[0.16em] uppercase text-amber">
+                    Your Name
+                  </label>
+                  <input
+                    className="form-input"
+                    type="text"
+                    placeholder="How you'd like to be credited"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="font-label text-[0.62rem] font-medium tracking-[0.16em] uppercase text-amber">
+                    Email (optional)
+                  </label>
+                  <input
+                    className="form-input"
+                    type="email"
+                    placeholder="For follow-up only"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="font-label text-[0.62rem] font-medium tracking-[0.16em] uppercase text-amber">
+                  Briefly describe your story
+                </label>
+                <textarea
+                  className="form-input"
+                  placeholder="What will you tell us? Where does it take place?"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="font-label text-[0.62rem] font-medium tracking-[0.16em] uppercase text-amber">
+                  Record Your Story
+                </label>
+                <button className="flex items-center justify-center gap-3.5 py-4 px-4 bg-bg-deep border border-dashed border-[rgba(196,154,60,0.35)] text-cream font-label text-[0.72rem] tracking-[0.18em] uppercase cursor-pointer transition-all duration-200 w-full hover:border-amber hover:bg-[rgba(196,154,60,0.03)]">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#c44c3c] shrink-0" />
+                  Record Now in Your Browser
+                </button>
+              </div>
+
+              <Link
+                href="/share-your-story"
+                className="bg-amber text-bg-deep border-none py-3.5 px-8 font-label text-[0.72rem] font-semibold tracking-[0.18em] uppercase cursor-pointer w-full transition-colors duration-200 text-center no-underline hover:bg-amber-light"
+              >
+                Submit Your Story →
+              </Link>
+              <p className="font-label text-[0.58rem] text-[rgba(158,146,120,0.55)] tracking-[0.06em] text-center">
+                Submissions are reviewed before any use. Your privacy is
+                respected. See our full consent policy.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center justify-center gap-8 p-12 border border-border bg-bg-deep text-center min-h-[340px]">
+            <div className="relative w-20 h-20 flex items-center justify-center">
+              <span className="absolute w-20 h-20 rounded-full border border-amber-dim opacity-50" />
+              <span className="absolute w-[54px] h-[54px] rounded-full border border-amber-dim opacity-70" />
+              <div className="w-9 h-9 rounded-full bg-[rgba(196,154,60,0.08)] flex items-center justify-center border border-amber-dim relative z-10">
+                <div className="w-3.5 h-5 bg-amber rounded-t-full relative">
+                  <span className="absolute bottom-[-7px] left-1/2 -translate-x-1/2 w-px h-[7px] bg-amber" />
+                </div>
+              </div>
+            </div>
+            <p className="font-display text-[1.05rem] italic text-cream-dim leading-[1.55] max-w-[200px]">
+              &ldquo;Every legend begins as someone&apos;s story.&rdquo;
+            </p>
+            <div className="font-label text-[0.6rem] tracking-[0.18em] uppercase text-[rgba(158,146,120,0.5)]">
+              Stories received: 47
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Subscribe CTA ── */}
+      <section className="p-0 border-none">
+        <div className="bg-bg-surface py-24 px-12 text-center flex flex-col items-center gap-6 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(196,154,60,0.04)_0%,transparent_60%)] pointer-events-none" />
+
+          <div className="font-label text-[0.65rem] font-medium tracking-[0.28em] uppercase text-amber">
+            Support the Work
+          </div>
+          <h2 className="font-display text-[clamp(2.5rem,6vw,4.75rem)] font-light text-cream leading-[1.02] max-w-[680px]">
+            Join the <em className="italic text-amber">Descent</em>
+          </h2>
+          <p className="text-[0.9rem] text-cream-dim max-w-[460px] leading-[1.78] font-body italic">
+            Subscriber support makes investigative history possible. Access
+            gated episodes, deep-dive field notes, primary source documents,
+            and extended oral history recordings.
+          </p>
+
+          <div className="flex flex-wrap gap-px mt-8 bg-border border border-border">
+            {[
+              {
+                label: "Free",
+                price: "$0",
+                features: [
+                  "First two episodes per season",
+                  "Free Field Notes articles",
+                  "Archive catalog preview",
+                  "Submit oral histories",
+                ],
+                cta: "Listen for Free",
+                featured: false,
+              },
+              {
+                label: "Descender",
+                price: "$8",
+                features: [
+                  "All episodes, all seasons",
+                  "Complete Field Notes archive",
+                  "Full Archive access",
+                  "Bonus content & research notes",
+                  "Early access to new seasons",
+                ],
+                cta: "Subscribe Now",
+                featured: true,
+              },
+              {
+                label: "Patron",
+                price: "$25",
+                features: [
+                  "Everything in Descender",
+                  "Credit in episode roll",
+                  "Quarterly SPOT session recordings",
+                  "Direct line to the host",
+                ],
+                cta: "Become a Patron",
+                featured: false,
+              },
+            ].map((tier) => (
+              <div
+                key={tier.label}
+                className={`p-8 flex flex-col gap-3 min-w-[210px] text-left ${
+                  tier.featured
+                    ? "bg-bg-raised border-t-2 border-t-amber"
+                    : "bg-bg-deep"
+                }`}
+              >
+                <div className="font-label text-[0.62rem] font-semibold tracking-[0.22em] uppercase text-amber">
+                  {tier.label}
+                </div>
+                <div className="font-display text-[2.5rem] font-light text-cream leading-none">
+                  {tier.price}{" "}
+                  <span className="text-[0.95rem] text-cream-dim font-label font-normal tracking-[0.08em]">
+                    / month
+                  </span>
+                </div>
+                <ul className="list-none flex flex-col gap-1.5 my-2">
+                  {tier.features.map((f) => (
+                    <li
+                      key={f}
+                      className="font-label text-[0.73rem] text-cream-dim flex items-center gap-2"
+                    >
+                      <span className="w-[5px] h-px bg-amber shrink-0" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/subscribe"
+                  className={`block py-2.5 px-4 text-center font-label text-[0.68rem] font-semibold tracking-[0.15em] uppercase cursor-pointer no-underline transition-all duration-200 ${
+                    tier.featured
+                      ? "bg-amber text-bg-deep border border-amber hover:bg-amber-light"
+                      : "bg-transparent text-cream-dim border border-border hover:border-amber hover:text-amber"
+                  }`}
+                >
+                  {tier.cta}
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
