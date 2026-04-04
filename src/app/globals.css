@@ -44,8 +44,8 @@
   --color-border: var(--border);
 
   --font-display: 'Chenier', Georgia, serif;
-  --font-label: 'Barlow Condensed', sans-serif;
-  --font-body: 'Source Serif 4', Georgia, serif;
+  --font-label: 'League Gothic', sans-serif;
+  --font-body: 'Lora', Georgia, serif;
 }
 
 /* ── Global Styles ── */
