@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import { SubscribeButton } from "@/components/subscribe/SubscribeButton";
+import { SubscribeNotice } from "@/components/subscribe/SubscribeNotice";
 
 export const metadata = {
   title: "Subscribe — Barefoot Mary",
@@ -38,6 +40,10 @@ const tiers = [
 export default function SubscribePage() {
   return (
     <section className="py-24 px-12 max-md:px-6">
+      <Suspense>
+        <SubscribeNotice />
+      </Suspense>
+
       <div className="text-center flex flex-col items-center gap-6 mb-16">
         <div className="font-label text-[0.65rem] font-medium tracking-[0.28em] uppercase text-amber">
           Support the Work
@@ -88,7 +94,7 @@ export default function SubscribePage() {
         ))}
       </div>
 
-      {/* Success / canceled notice */}
+      {/* Footer note */}
       <div className="max-w-2xl mx-auto mt-8 text-center">
         <p className="font-label text-[0.65rem] tracking-[0.1em] text-cream-dim">
           Public episodes and articles remain freely accessible without a subscription.
