@@ -13,6 +13,9 @@ const navLinks = [
   { href: "/about", label: "About" },
 ];
 
+const leftNavLinks = navLinks.slice(0, 2);
+const rightNavLinks = navLinks.slice(2);
+
 export function Nav() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
@@ -57,11 +60,11 @@ export function Nav() {
 
           {/* Nav links — desktop only */}
           <ul className="hidden md:flex gap-8 list-none">
-            {navLinks.map((link) => (
+            {leftNavLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={`font-label text-[0.72rem] font-medium tracking-[0.2em] uppercase no-underline transition-colors duration-200 ${
+                  className={`font-label text-xs font-medium tracking-[0.2em] uppercase no-underline whitespace-nowrap transition-colors duration-200 ${
                     pathname.startsWith(link.href)
                       ? "text-cream"
                       : "text-cream-dim hover:text-cream"
@@ -79,13 +82,26 @@ export function Nav() {
           <Image src="/logo.svg" alt="Barefoot Mary" width={120} height={32} priority />
         </Link>
 
-        {/* Right: CTA — always */}
-        <div className="flex justify-end">
+        {/* Right: nav links + CTA — desktop only; hidden on mobile */}
+        <div className="hidden md:flex items-center justify-end gap-6">
+          {rightNavLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`font-label text-xs font-medium tracking-[0.2em] uppercase no-underline whitespace-nowrap transition-colors duration-200 ${
+                pathname.startsWith(link.href)
+                  ? "text-cream"
+                  : "text-cream-dim hover:text-cream"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
           <Link
             href="/subscribe"
-            className="font-label text-[0.65rem] font-semibold tracking-[0.18em] uppercase text-bg-deep bg-amber px-4 py-2 no-underline transition-colors duration-200 hover:bg-amber-light whitespace-nowrap"
+            className="font-label text-[0.7rem] font-semibold tracking-[0.18em] uppercase text-bg-deep bg-amber px-5 py-2 no-underline transition-colors duration-200 hover:bg-amber-light whitespace-nowrap ml-2"
           >
-            Join the Descent
+            Subscribe
           </Link>
         </div>
       </nav>
@@ -136,7 +152,7 @@ export function Nav() {
               className="block w-full text-center font-label text-[0.72rem] font-semibold tracking-[0.18em] uppercase text-bg-deep bg-amber py-4 no-underline transition-colors duration-200 hover:bg-amber-light"
               onClick={() => setIsOpen(false)}
             >
-              Join the Descent
+              Subscribe
             </Link>
           </div>
         </div>
