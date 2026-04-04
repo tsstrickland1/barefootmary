@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { AccountNotice } from "@/components/auth/AccountNotice";
 import type { Subscriber } from "@/types/database";
 
 export const metadata = {
@@ -41,6 +43,10 @@ export default async function AccountPage() {
 
   return (
     <section className="px-12 py-20 max-w-2xl mx-auto max-md:px-6">
+      <Suspense>
+        <AccountNotice />
+      </Suspense>
+
       <div className="mb-12">
         <div className="font-label text-[0.65rem] tracking-[0.25em] uppercase text-amber mb-3">
           Account

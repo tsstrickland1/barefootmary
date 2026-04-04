@@ -15,6 +15,7 @@ export function SignupForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [awaitingConfirmation, setAwaitingConfirmation] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -33,12 +34,12 @@ export function SignupForm() {
     setLoading(true);
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+    const callbackUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirect)}`;
+
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/account`,
-      },
+      options: { emailRedirectTo: callbackUrl },
     });
 
     if (error) {
@@ -47,20 +48,51 @@ export function SignupForm() {
       return;
     }
 
-    // Sign in immediately after signup (Supabase auto-confirms if not using email confirmation)
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (signInError) {
-      // Account created but couldn't sign in — likely needs email confirmation
-      router.push("/login?confirmed=false");
+    // If session is immediately available, Supabase auto-confirmed the account
+    if (data.session) {
+      router.refresh();
+      router.push(redirect);
       return;
     }
 
-    router.refresh();
-    router.push(redirect);
+    // No session means a confirmation email was sent
+    setLoading(false);
+    setAwaitingConfirmation(true);
+  }
+
+  if (awaitingConfirmation) {
+    return (
+      <div className="flex flex-col items-center gap-5 py-2 text-center">
+        <div className="w-10 h-10 rounded-full bg-[rgba(196,154,60,0.12)] flex items-center justify-center">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="5" width="16" height="12" rx="1" stroke="#c49a3c" strokeWidth="1.2" />
+            <path d="M2 7l8 5 8-5" stroke="#c49a3c" strokeWidth="1.2" strokeLinecap="round" />
+          </svg>
+        </div>
+        <div>
+          <p className="font-label text-[0.7rem] tracking-[0.15em] uppercase text-amber mb-2">
+            Check your inbox
+          </p>
+          <p className="text-[0.88rem] text-cream font-body leading-[1.7]">
+            We sent a confirmation link to{" "}
+            <span className="text-cream font-medium">{email}</span>.
+          </p>
+          <p className="text-[0.82rem] text-cream-dim font-body mt-2 leading-[1.7]">
+            Click the link in the email to activate your account and sign in.
+          </p>
+        </div>
+        <p className="text-[0.78rem] text-cream-dim font-body">
+          Wrong address?{" "}
+          <button
+            type="button"
+            onClick={() => setAwaitingConfirmation(false)}
+            className="text-amber hover:opacity-80 transition-opacity underline"
+          >
+            Go back
+          </button>
+        </p>
+      </div>
+    );
   }
 
   return (
