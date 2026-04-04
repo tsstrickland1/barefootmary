@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 48" width="180" height="48" role="img" aria-label="Barefoot Mary">
+  <title>Barefoot Mary</title>
+  <text
+    x="90" y="14"
+    font-family="'Barlow Condensed', sans-serif"
+    font-size="9"
+    font-weight="500"
+    letter-spacing="4"
+    text-anchor="middle"
+    fill="#c49a3c"
+  >BAREFOOT</text>
+  <line x1="18" y1="20" x2="162" y2="20" stroke="#c49a3c" stroke-width="0.5" opacity="0.45"/>
+  <text
+    x="90" y="43"
+    font-family="'Cormorant Garamond', Georgia, serif"
+    font-size="27"
+    font-weight="600"
+    letter-spacing="3"
+    text-anchor="middle"
+    fill="#c49a3c"
+  >MARY</text>
+</svg>

@@ -1,10 +1,11 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export function Nav() {
   return (
     <nav className="sticky top-0 z-100 flex items-center justify-between px-12 py-5 bg-[rgba(14,12,10,0.94)] backdrop-blur-[10px] border-b border-border">
-      <Link href="/" className="font-display text-[1.2rem] font-semibold text-amber tracking-[0.06em] no-underline">
-        Barefoot Mary
+      <Link href="/" className="no-underline">
+        <Image src="/logo.svg" alt="Barefoot Mary" width={180} height={48} priority />
       </Link>
 
       <ul className="hidden md:flex gap-10 list-none">
