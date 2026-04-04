@@ -1,11 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { SubmissionStatus } from "@/types/database";
 
 export async function updateSubmissionStatus(formData: FormData) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const id = formData.get("id") as string;
   const status = formData.get("status") as SubmissionStatus;
 

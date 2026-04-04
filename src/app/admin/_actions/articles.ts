@@ -1,10 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function createArticle(formData: FormData) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const bodyRaw = formData.get("body_json") as string;
   const body_json = bodyRaw ? JSON.parse(bodyRaw) : null;
 
@@ -25,7 +25,7 @@ export async function createArticle(formData: FormData) {
 }
 
 export async function updateArticle(formData: FormData) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const id = formData.get("id") as string;
   const bodyRaw = formData.get("body_json") as string;
   const body_json = bodyRaw ? JSON.parse(bodyRaw) : null;
@@ -50,7 +50,7 @@ export async function updateArticle(formData: FormData) {
 }
 
 export async function deleteArticle(formData: FormData) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const id = formData.get("id") as string;
   const { error } = await supabase.from("articles").delete().eq("id", id);
   if (error) throw new Error(error.message);

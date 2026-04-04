@@ -1,10 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function createEpisode(formData: FormData) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const { error } = await supabase.from("episodes").insert({
     season_id: formData.get("season_id") as string,
     slug: formData.get("slug") as string,
@@ -23,7 +23,7 @@ export async function createEpisode(formData: FormData) {
 }
 
 export async function updateEpisode(formData: FormData) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const id = formData.get("id") as string;
   const { error } = await supabase
     .from("episodes")
@@ -46,7 +46,7 @@ export async function updateEpisode(formData: FormData) {
 }
 
 export async function deleteEpisode(formData: FormData) {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const id = formData.get("id") as string;
   const { error } = await supabase.from("episodes").delete().eq("id", id);
   if (error) throw new Error(error.message);
