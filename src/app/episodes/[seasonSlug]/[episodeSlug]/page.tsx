@@ -112,9 +112,10 @@ export default async function EpisodePage({
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border border border-border">
             {relatedArchive.map((item) => (
-              <div
+              <Link
                 key={item.id}
-                className="bg-bg-surface p-5 flex flex-col gap-2 transition-colors duration-200 hover:bg-bg-raised cursor-pointer"
+                href={`/archive/${item.id}`}
+                className="bg-bg-surface p-5 flex flex-col gap-2 transition-colors duration-200 hover:bg-bg-raised no-underline text-inherit"
               >
                 <div
                   className={`font-label text-[0.58rem] font-semibold tracking-[0.15em] uppercase ${
@@ -128,7 +129,7 @@ export default async function EpisodePage({
                 <div className="font-display text-[0.95rem] text-cream leading-[1.35]">
                   {item.title}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
