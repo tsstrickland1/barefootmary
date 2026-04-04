@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { EpisodeCard } from "@/components/episodes/EpisodeCard";
+import { SubscribeButton } from "@/components/subscribe/SubscribeButton";
 import {
   sampleEpisodes,
   sampleArticles,
@@ -151,19 +152,31 @@ export default function HomePage() {
           {featured && (
             <Link
               href={`/field-notes/${featured.slug}`}
-              className="bg-bg-surface p-10 flex flex-col gap-4 transition-colors duration-200 cursor-pointer no-underline text-inherit hover:bg-bg-raised"
+              className="bg-bg-surface flex flex-col transition-colors duration-200 cursor-pointer no-underline text-inherit hover:bg-bg-raised"
             >
-              <div className="font-label text-[0.6rem] font-semibold tracking-[0.16em] uppercase text-teal-light">
-                {featured.tag}
-              </div>
-              <div className="font-display text-[1.55rem] font-normal text-cream leading-[1.2]">
-                {featured.title}
-              </div>
-              <p className="text-[0.84rem] text-cream-dim leading-[1.75] font-body">
-                {featured.excerpt}
-              </p>
-              <div className="font-label text-[0.62rem] tracking-[0.1em] text-cream-dim mt-auto">
-                {featured.byline}
+              {featured.image_url && (
+                <div className="h-52 overflow-hidden">
+                  <img
+                    src={featured.image_url}
+                    alt={featured.title}
+                    className="w-full h-full object-cover"
+                    draggable={false}
+                  />
+                </div>
+              )}
+              <div className="p-10 flex flex-col gap-4 flex-1">
+                <div className="font-label text-[0.6rem] font-semibold tracking-[0.16em] uppercase text-teal-light">
+                  {featured.tag}
+                </div>
+                <div className="font-display text-[1.55rem] font-normal text-cream leading-[1.2]">
+                  {featured.title}
+                </div>
+                <p className="text-[0.84rem] text-cream-dim leading-[1.75] font-body">
+                  {featured.excerpt}
+                </p>
+                <div className="font-label text-[0.62rem] tracking-[0.1em] text-cream-dim mt-auto">
+                  {featured.byline}
+                </div>
               </div>
             </Link>
           )}
@@ -250,9 +263,10 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border">
           {sampleArchiveItems.map((item) => (
-            <div
+            <Link
               key={item.id}
-              className="bg-bg-surface p-6 flex flex-col gap-2 cursor-pointer transition-colors duration-200 min-h-[140px] hover:bg-bg-raised"
+              href={`/archive/${item.id}`}
+              className="bg-bg-surface p-6 flex flex-col gap-2 transition-colors duration-200 min-h-[140px] hover:bg-bg-raised no-underline text-inherit"
             >
               <div
                 className={`font-label text-[0.58rem] font-semibold tracking-[0.15em] uppercase flex items-center gap-1.5 ${
@@ -271,7 +285,7 @@ export default function HomePage() {
               <div className="font-label text-[0.58rem] text-cream-dim mt-auto">
                 Ref: {item.episode}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -291,66 +305,14 @@ export default function HomePage() {
             <p className="text-[0.87rem] text-cream-dim leading-[1.88] mb-8 font-body">
               Barefoot Mary is built on the belief that the best history lives
               in living memory. If you have a story about Pensacola&apos;s
-              tunnels—or any Gulf Coast legend—we want to hear it. Record
-              directly in your browser, or upload a file. All submissions are
-              reviewed before use, and you choose how you&apos;re credited.
+              tunnels—or any Gulf Coast legend—we want to hear it.
             </p>
-
-            <div className="flex flex-col gap-3.5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                <div className="flex flex-col gap-1.5">
-                  <label className="font-label text-[0.62rem] font-medium tracking-[0.16em] uppercase text-amber">
-                    Your Name
-                  </label>
-                  <input
-                    className="form-input"
-                    type="text"
-                    placeholder="How you'd like to be credited"
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="font-label text-[0.62rem] font-medium tracking-[0.16em] uppercase text-amber">
-                    Email (optional)
-                  </label>
-                  <input
-                    className="form-input"
-                    type="email"
-                    placeholder="For follow-up only"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="font-label text-[0.62rem] font-medium tracking-[0.16em] uppercase text-amber">
-                  Briefly describe your story
-                </label>
-                <textarea
-                  className="form-input"
-                  placeholder="What will you tell us? Where does it take place?"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="font-label text-[0.62rem] font-medium tracking-[0.16em] uppercase text-amber">
-                  Record Your Story
-                </label>
-                <button className="flex items-center justify-center gap-3.5 py-4 px-4 bg-bg-deep border border-dashed border-[rgba(196,154,60,0.35)] text-cream font-label text-[0.72rem] tracking-[0.18em] uppercase cursor-pointer transition-all duration-200 w-full hover:border-amber hover:bg-[rgba(196,154,60,0.03)]">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#c44c3c] shrink-0" />
-                  Record Now in Your Browser
-                </button>
-              </div>
-
-              <Link
-                href="/share-your-story"
-                className="bg-amber text-bg-deep border-none py-3.5 px-8 font-label text-[0.72rem] font-semibold tracking-[0.18em] uppercase cursor-pointer w-full transition-colors duration-200 text-center no-underline hover:bg-amber-light"
-              >
-                Submit Your Story →
-              </Link>
-              <p className="font-label text-[0.58rem] text-[rgba(158,146,120,0.55)] tracking-[0.06em] text-center">
-                Submissions are reviewed before any use. Your privacy is
-                respected. See our full consent policy.
-              </p>
-            </div>
+            <Link
+              href="/share-your-story"
+              className="inline-block bg-amber text-bg-deep border-none py-3.5 px-8 font-label text-[0.72rem] font-semibold tracking-[0.18em] uppercase cursor-pointer transition-colors duration-200 text-center no-underline hover:bg-amber-light"
+            >
+              Share Your Story →
+            </Link>
           </div>
 
           <div className="flex flex-col items-center justify-center gap-8 p-12 border border-border bg-bg-deep text-center min-h-[340px]">
@@ -375,7 +337,7 @@ export default function HomePage() {
 
       {/* ── Subscribe CTA ── */}
       <section className="p-0 border-none">
-        <div className="bg-bg-surface py-24 px-12 text-center flex flex-col items-center gap-6 relative overflow-hidden">
+        <div className="bg-bg-surface py-24 px-12 text-center flex flex-col items-center gap-6 relative overflow-hidden max-md:px-6">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(196,154,60,0.04)_0%,transparent_60%)] pointer-events-none" />
 
           <div className="font-label text-[0.65rem] font-medium tracking-[0.28em] uppercase text-amber">
@@ -390,23 +352,12 @@ export default function HomePage() {
             and extended oral history recordings.
           </p>
 
-          <div className="flex flex-wrap gap-px mt-8 bg-border border border-border">
+          <div className="flex flex-wrap gap-px mt-8 bg-border border border-border max-w-2xl w-full">
             {[
-              {
-                label: "Free",
-                price: "$0",
-                features: [
-                  "First two episodes per season",
-                  "Free Field Notes articles",
-                  "Archive catalog preview",
-                  "Submit oral histories",
-                ],
-                cta: "Listen for Free",
-                featured: false,
-              },
               {
                 label: "Descender",
                 price: "$8",
+                plan: "descender" as const,
                 features: [
                   "All episodes, all seasons",
                   "Complete Field Notes archive",
@@ -420,6 +371,7 @@ export default function HomePage() {
               {
                 label: "Patron",
                 price: "$25",
+                plan: "patron" as const,
                 features: [
                   "Everything in Descender",
                   "Credit in episode roll",
@@ -432,7 +384,7 @@ export default function HomePage() {
             ].map((tier) => (
               <div
                 key={tier.label}
-                className={`p-8 flex flex-col gap-3 min-w-[210px] text-left ${
+                className={`p-8 flex flex-col gap-3 min-w-[240px] text-left flex-1 ${
                   tier.featured
                     ? "bg-bg-raised border-t-2 border-t-amber"
                     : "bg-bg-deep"
@@ -458,16 +410,7 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
-                <Link
-                  href="/subscribe"
-                  className={`block py-2.5 px-4 text-center font-label text-[0.68rem] font-semibold tracking-[0.15em] uppercase cursor-pointer no-underline transition-all duration-200 ${
-                    tier.featured
-                      ? "bg-amber text-bg-deep border border-amber hover:bg-amber-light"
-                      : "bg-transparent text-cream-dim border border-border hover:border-amber hover:text-amber"
-                  }`}
-                >
-                  {tier.cta}
-                </Link>
+                <SubscribeButton plan={tier.plan} label={tier.cta} featured={tier.featured} />
               </div>
             ))}
           </div>

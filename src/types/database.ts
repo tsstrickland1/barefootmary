@@ -12,6 +12,7 @@ export interface Season {
   description: string;
   numeral: string;
   status: "upcoming" | "airing" | "complete";
+  image_url: string | null;
   created_at: string;
 }
 
@@ -26,6 +27,7 @@ export interface Episode {
   duration: string;
   audio_url: string | null;
   peaks_json_url: string | null;
+  image_url: string | null;
   visibility: Visibility;
   published_at: string | null;
   created_at: string;
@@ -41,6 +43,7 @@ export interface Article {
   visibility: Visibility;
   author: string;
   featured: boolean;
+  image_url: string | null;
   published_at: string | null;
   created_at: string;
 }
@@ -72,7 +75,7 @@ export interface Subscriber {
   user_id: string;
   stripe_customer_id: string;
   stripe_subscription_id: string;
-  plan: "free" | "descender" | "patron";
+  plan: "descender" | "patron";
   status: "active" | "canceled" | "past_due";
   current_period_end: string;
   created_at: string;

@@ -9,6 +9,7 @@ export interface EpisodeCardData {
   visibility: "public" | "subscriber" | "patron";
   slug: string;
   seasonSlug: string;
+  image_url?: string | null;
 }
 
 export function EpisodeCard({ ep }: { ep: EpisodeCardData }) {
@@ -17,33 +18,49 @@ export function EpisodeCard({ ep }: { ep: EpisodeCardData }) {
   return (
     <Link
       href={`/episodes/${ep.seasonSlug}/${ep.slug}`}
-      className="bg-bg-surface p-7 flex flex-col gap-3 transition-colors duration-200 cursor-pointer no-underline text-inherit hover:bg-bg-raised"
+      className="bg-bg-surface flex flex-col transition-colors duration-200 cursor-pointer no-underline text-inherit hover:bg-bg-raised"
     >
-      <div className="flex items-center gap-3.5">
-        <span className="font-label text-[0.6rem] font-semibold tracking-[0.18em] uppercase text-amber bg-[rgba(196,154,60,0.08)] px-2 py-[3px]">
-          Ep. {ep.number}
-        </span>
-        <span
-          className={`font-label text-[0.58rem] font-semibold tracking-[0.14em] uppercase ${
-            isFree ? "text-teal-light" : "text-amber"
-          }`}
-        >
-          {isFree ? "Free" : "🔒 Subscriber"}
-        </span>
-        <span className="font-label text-[0.62rem] text-cream-dim tracking-[0.05em] ml-auto">
-          {ep.duration}
-        </span>
+      {/* Featured image — renders only when provided */}
+      {ep.image_url ? (
+        <div className="h-40 overflow-hidden">
+          <img
+            src={ep.image_url}
+            alt={ep.title}
+            className="w-full h-full object-cover"
+            draggable={false}
+          />
+        </div>
+      ) : (
+        <div className="px-7 pt-7">
+          <Waveform />
+        </div>
+      )}
+
+      <div className="p-7 flex flex-col gap-3 flex-1">
+        <div className="flex items-center gap-3.5">
+          <span className="font-label text-[0.6rem] font-semibold tracking-[0.18em] uppercase text-amber bg-[rgba(196,154,60,0.08)] px-2 py-[3px]">
+            Ep. {ep.number}
+          </span>
+          <span
+            className={`font-label text-[0.58rem] font-semibold tracking-[0.14em] uppercase ${
+              isFree ? "text-teal-light" : "text-amber"
+            }`}
+          >
+            {isFree ? "Free" : "🔒 Subscriber"}
+          </span>
+          <span className="font-label text-[0.62rem] text-cream-dim tracking-[0.05em] ml-auto">
+            {ep.duration}
+          </span>
+        </div>
+
+        <div className="font-display text-[1.4rem] font-normal text-cream leading-[1.15]">
+          {ep.title}
+        </div>
+
+        <p className="text-[0.82rem] text-cream-dim leading-[1.68] font-body">
+          {ep.description}
+        </p>
       </div>
-
-      <div className="font-display text-[1.4rem] font-normal text-cream leading-[1.15]">
-        {ep.title}
-      </div>
-
-      <p className="text-[0.82rem] text-cream-dim leading-[1.68] font-body">
-        {ep.description}
-      </p>
-
-      <Waveform />
     </Link>
   );
 }
