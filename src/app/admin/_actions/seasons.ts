@@ -2,6 +2,13 @@
 
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { uploadImage } from "@/lib/supabase/uploadImage";
+
+async function resolveImageUrl(formData: FormData): Promise<string | null> {
+  const file = formData.get("image_file") as File | null;
+  if (file && file.size > 0) return uploadImage(file, "seasons");
+  return (formData.get("image_url") as string) || null;
+}
 
 export async function createSeason(formData: FormData) {
   const supabase = createAdminClient();
@@ -13,7 +20,7 @@ export async function createSeason(formData: FormData) {
     description: (formData.get("description") as string) || null,
     numeral: (formData.get("numeral") as string) || null,
     status: formData.get("status") as string,
-    image_url: (formData.get("image_url") as string) || null,
+    image_url: await resolveImageUrl(formData),
   });
   if (error) throw new Error(error.message);
   redirect("/admin/seasons");
@@ -32,7 +39,7 @@ export async function updateSeason(formData: FormData) {
       description: (formData.get("description") as string) || null,
       numeral: (formData.get("numeral") as string) || null,
       status: formData.get("status") as string,
-      image_url: (formData.get("image_url") as string) || null,
+      image_url: await resolveImageUrl(formData),
     })
     .eq("id", id);
   if (error) throw new Error(error.message);

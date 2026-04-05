@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
 import { ArticleBodyEditor } from "@/components/admin/ArticleBodyEditor";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { createArticle } from "@/app/admin/_actions/articles";
 import type { Season } from "@/types/database";
 
@@ -27,7 +28,7 @@ export default async function NewArticlePage() {
         New Article
       </h1>
 
-      <form action={createArticle} className="flex flex-col gap-6">
+      <form action={createArticle} encType="multipart/form-data" className="flex flex-col gap-6">
         <AdminFormField label="Title" name="title">
           <input id="title" name="title" type="text" required className="form-input" />
         </AdminFormField>
@@ -75,8 +76,8 @@ export default async function NewArticlePage() {
             />
           </AdminFormField>
 
-          <AdminFormField label="Image URL" name="image_url">
-            <input id="image_url" name="image_url" type="url" className="form-input" />
+          <AdminFormField label="Featured Image" name="image_file">
+            <ImageUploadField />
           </AdminFormField>
         </div>
 

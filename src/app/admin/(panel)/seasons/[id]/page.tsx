@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { AdminFormField } from "@/components/admin/AdminFormField";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { updateSeason } from "@/app/admin/_actions/seasons";
 import { createClient } from "@/lib/supabase/server";
 
@@ -26,7 +27,7 @@ export default async function EditSeasonPage({
         Edit Season
       </h1>
 
-      <form action={updateSeason} className="flex flex-col gap-6">
+      <form action={updateSeason} encType="multipart/form-data" className="flex flex-col gap-6">
         <input type="hidden" name="id" value={season.id} />
 
         <div className="grid grid-cols-2 gap-6">
@@ -108,14 +109,8 @@ export default async function EditSeasonPage({
           />
         </AdminFormField>
 
-        <AdminFormField label="Image URL" name="image_url">
-          <input
-            id="image_url"
-            name="image_url"
-            type="url"
-            defaultValue={season.image_url ?? ""}
-            className="form-input"
-          />
+        <AdminFormField label="Featured Image" name="image_file">
+          <ImageUploadField currentUrl={season.image_url} />
         </AdminFormField>
 
         <div className="flex gap-4 pt-2">

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
 import { ArticleBodyEditor } from "@/components/admin/ArticleBodyEditor";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { updateArticle } from "@/app/admin/_actions/articles";
 import type { Season } from "@/types/database";
 
@@ -43,7 +44,7 @@ export default async function EditArticlePage({
         Edit Article
       </h1>
 
-      <form action={updateArticle} className="flex flex-col gap-6">
+      <form action={updateArticle} encType="multipart/form-data" className="flex flex-col gap-6">
         <input type="hidden" name="id" value={article.id} />
 
         <AdminFormField label="Title" name="title">
@@ -125,14 +126,8 @@ export default async function EditArticlePage({
             />
           </AdminFormField>
 
-          <AdminFormField label="Image URL" name="image_url">
-            <input
-              id="image_url"
-              name="image_url"
-              type="url"
-              defaultValue={article.image_url ?? ""}
-              className="form-input"
-            />
+          <AdminFormField label="Featured Image" name="image_file">
+            <ImageUploadField currentUrl={article.image_url} />
           </AdminFormField>
         </div>
 

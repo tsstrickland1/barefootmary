@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
+import { ArchiveFileUploadField } from "@/components/admin/ArchiveFileUploadField";
 import { updateArchiveItem } from "@/app/admin/_actions/archive";
 import type { Season, Episode, Article } from "@/types/database";
 
@@ -33,7 +34,7 @@ export default async function EditArchiveItemPage({
         Edit Archive Item
       </h1>
 
-      <form action={updateArchiveItem} className="flex flex-col gap-6">
+      <form action={updateArchiveItem} encType="multipart/form-data" className="flex flex-col gap-6">
         <input type="hidden" name="id" value={item.id} />
 
         <AdminFormField label="Title" name="title">
@@ -57,46 +58,25 @@ export default async function EditArchiveItemPage({
           />
         </AdminFormField>
 
-        <div className="grid grid-cols-2 gap-6">
-          <AdminFormField label="Type" name="type">
-            <select
-              id="type"
-              name="type"
-              required
-              defaultValue={item.type}
-              className="form-input"
-            >
-              <option value="pdf">PDF</option>
-              <option value="image">Image</option>
-              <option value="audio">Audio</option>
-              <option value="transcript">Transcript</option>
-            </select>
-          </AdminFormField>
+        {/* type is derived from the uploaded file; preserved here when no new file is chosen */}
+        <input type="hidden" name="type" value={item.type} />
 
-          <AdminFormField label="Visibility" name="visibility">
-            <select
-              id="visibility"
-              name="visibility"
-              required
-              defaultValue={item.visibility}
-              className="form-input"
-            >
-              <option value="public">Public</option>
-              <option value="subscriber">Subscriber</option>
-              <option value="patron">Patron</option>
-            </select>
-          </AdminFormField>
-        </div>
-
-        <AdminFormField label="File Path" name="file_path" hint="Storage path, e.g. archive/document.pdf">
-          <input
-            id="file_path"
-            name="file_path"
-            type="text"
+        <AdminFormField label="Visibility" name="visibility">
+          <select
+            id="visibility"
+            name="visibility"
             required
-            defaultValue={item.file_path}
+            defaultValue={item.visibility}
             className="form-input"
-          />
+          >
+            <option value="public">Public</option>
+            <option value="subscriber">Subscriber</option>
+            <option value="patron">Patron</option>
+          </select>
+        </AdminFormField>
+
+        <AdminFormField label="File" name="archive_file">
+          <ArchiveFileUploadField currentPath={item.file_path} />
         </AdminFormField>
 
         <AdminFormField label="Related Season" name="season_id">
