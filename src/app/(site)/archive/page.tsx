@@ -22,14 +22,19 @@ export default async function ArchivePage() {
       .order("number"),
   ]);
 
-  const archiveItems = (items ?? []) as {
+  type RawItem = {
     id: string;
     title: string;
     type: string;
     visibility: "public" | "subscriber" | "patron";
     season_id: string | null;
-    episodes: { title: string; number: number } | null;
-  }[];
+    episodes: { title: string; number: number }[] | null;
+  };
+
+  const archiveItems = (items as unknown as RawItem[] ?? []).map((item) => ({
+    ...item,
+    episodes: Array.isArray(item.episodes) ? (item.episodes[0] ?? null) : null,
+  }));
 
   const seasonList = (seasons as Pick<Season, "id" | "title" | "numeral">[] ?? []);
 
