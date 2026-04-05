@@ -4,7 +4,7 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 export const metadata = {
   title: "About — Barefoot Mary",
   description:
-    "About the show, the SPOT methodology, and the team behind Barefoot Mary.",
+    "About Barefoot Mary, an investigative history podcast rooted in Pensacola and the wider Gulf Coast.",
 };
 
 export default function AboutPage() {
@@ -21,33 +21,30 @@ export default function AboutPage() {
             </h2>
             <div className="text-[0.92rem] text-cream-dim leading-[1.95] font-body space-y-4">
               <p>
-                Barefoot Mary is an investigative history podcast that examines
-                the half-remembered events, overlooked histories, and persistent
-                local legends of Pensacola and the wider Gulf Coast. Each season
-                takes a single thread of local folklore and follows it through
-                archives, oral histories, and the landscapes where these stories
-                live.
+                Barefoot Mary is an investigative history podcast rooted in
+                Pensacola and the wider Gulf Coast. It takes its name from Mary
+                "Barefoot Mary" Thorsen, a waterfront fixture in the late 19th
+                and early 20th centuries who became known—according to local
+                legend—as a keeper of the city's secrets.
               </p>
               <p>
-                The show is produced at WUWF, the NPR affiliate for Northwest
-                Florida, and hosted by T.S. Strickland.
+                Mary occupied a liminal space between respectability and rumor.
+                Stories cast her as a figure who moved through Pensacola's
+                red-light district, observing the powerful and trading in
+                discretion. When she died, her passing was marked in the
+                newspapers and memorialized in verse, fixing her in the city's
+                oral memory as someone who bridged official history and whispered
+                story.
               </p>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="font-display text-[1.8rem] font-light italic text-cream mb-4">
-              The SPOT Methodology
-            </h2>
-            <div className="text-[0.92rem] text-cream-dim leading-[1.95] font-body space-y-4">
               <p>
-                SPOT stands for <strong className="text-cream font-normal">Site, People, Object, Text</strong>—the
-                four lenses through which every investigation proceeds. Each
-                episode visits a specific site, speaks to the people connected to
-                it, examines the material objects that survive, and reads the
-                texts (maps, deeds, letters, newspaper clippings) that document
-                its history. This four-part framework ensures that no single
-                source dominates the narrative.
+                The podcast adopts this same stance. Barefoot Mary examines the
+                half-remembered events, overlooked histories, and persistent
+                local legends that shape how communities understand themselves.
+                Each season focuses on a single theme and unfolds across multiple
+                episodes, combining investigative reporting, archival research,
+                oral history, and cultural analysis—not to debunk for its own
+                sake, but to understand why certain stories endure, even when
+                certainty does not.
               </p>
             </div>
           </div>
@@ -70,14 +67,13 @@ export default function AboutPage() {
 
           <div>
             <h2 className="font-display text-[1.8rem] font-light italic text-cream mb-4">
-              WUWF Partnership
+              A Production of WUWF
             </h2>
             <div className="text-[0.92rem] text-cream-dim leading-[1.95] font-body space-y-4">
               <p>
-                Barefoot Mary is produced in partnership with WUWF 88.1 FM, the
-                NPR member station for Northwest Florida, licensed to the
-                University of West Florida. WUWF provides editorial support,
-                studio facilities, and distribution infrastructure.
+                Barefoot Mary is a production of WUWF 88.1 FM, the NPR member
+                station for Northwest Florida, licensed to the University of West
+                Florida.
               </p>
             </div>
           </div>
