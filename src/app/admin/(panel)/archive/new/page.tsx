@@ -24,7 +24,7 @@ export default async function NewArchiveItemPage() {
         New Archive Item
       </h1>
 
-      <form action={createArchiveItem} encType="multipart/form-data" className="flex flex-col gap-6">
+      <form action={createArchiveItem} className="flex flex-col gap-6">
         <AdminFormField label="Title" name="title">
           <input id="title" name="title" type="text" required className="form-input" />
         </AdminFormField>

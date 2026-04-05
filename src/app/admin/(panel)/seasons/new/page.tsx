@@ -11,7 +11,7 @@ export default function NewSeasonPage() {
         New Season
       </h1>
 
-      <form action={createSeason} encType="multipart/form-data" className="flex flex-col gap-6">
+      <form action={createSeason} className="flex flex-col gap-6">
         <div className="grid grid-cols-2 gap-6">
           <AdminFormField label="Number" name="number">
             <input

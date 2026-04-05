@@ -33,7 +33,7 @@ export default async function EditEpisodePage({
         Edit Episode
       </h1>
 
-      <form action={updateEpisode} encType="multipart/form-data" className="flex flex-col gap-6">
+      <form action={updateEpisode} className="flex flex-col gap-6">
         <input type="hidden" name="id" value={episode.id} />
 
         <AdminFormField label="Season" name="season_id">

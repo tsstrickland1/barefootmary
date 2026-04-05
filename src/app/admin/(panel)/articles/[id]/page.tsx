@@ -44,7 +44,7 @@ export default async function EditArticlePage({
         Edit Article
       </h1>
 
-      <form action={updateArticle} encType="multipart/form-data" className="flex flex-col gap-6">
+      <form action={updateArticle} className="flex flex-col gap-6">
         <input type="hidden" name="id" value={article.id} />
 
         <AdminFormField label="Title" name="title">
