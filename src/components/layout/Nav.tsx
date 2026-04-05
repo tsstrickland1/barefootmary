@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
@@ -21,29 +21,69 @@ const rightNavLinks = navLinks.slice(2);
 export function Nav() {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+
+    async function loadUser(userId: string | undefined) {
+      if (!userId) {
+        setIsAdmin(false);
+        return;
+      }
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", userId)
+        .single();
+      setIsAdmin(profile?.is_admin ?? false);
+    }
+
+    supabase.auth.getSession().then(({ data }) => {
+      const u = data.session?.user ?? null;
+      setUser(u);
+      loadUser(u?.id);
     });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      const u = session?.user ?? null;
+      setUser(u);
+      loadUser(u?.id);
+    });
+
     return () => subscription.unsubscribe();
   }, []);
 
-  // Close menu on route change
+  // Close menu and dropdown on route change
   useEffect(() => {
     setIsOpen(false);
+    setIsDropdownOpen(false);
   }, [pathname]);
 
-  // Close menu on Escape key
+  // Close menu and dropdown on Escape key
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setIsOpen(false);
+      if (e.key === "Escape") {
+        setIsOpen(false);
+        setIsDropdownOpen(false);
+      }
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function onMouseDown(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onMouseDown);
+    return () => document.removeEventListener("mousedown", onMouseDown);
   }, []);
 
   // Prevent body scroll when menu is open
@@ -110,16 +150,35 @@ export function Nav() {
             </Link>
           ))}
           {user ? (
-            <Link
-              href="/account"
-              className={`font-label text-xs font-medium tracking-[0.2em] uppercase no-underline whitespace-nowrap transition-colors duration-200 ${
-                pathname.startsWith("/account")
-                  ? "text-cream"
-                  : "text-cream-dim hover:text-cream"
-              }`}
-            >
-              Account
-            </Link>
+            <div ref={dropdownRef} className="relative">
+              <button
+                onClick={() => setIsDropdownOpen((v) => !v)}
+                className="w-8 h-8 rounded-full bg-amber flex items-center justify-center font-label text-xs font-semibold text-bg-deep uppercase tracking-wide cursor-pointer transition-opacity duration-200 hover:opacity-80"
+                aria-label="User menu"
+                aria-expanded={isDropdownOpen}
+                aria-haspopup="true"
+              >
+                {user.email?.[0]?.toUpperCase() ?? "U"}
+              </button>
+              {isDropdownOpen && (
+                <div className="absolute right-0 top-full mt-2 min-w-[160px] bg-[rgba(14,12,10,0.98)] border border-border py-1 z-10">
+                  <Link
+                    href="/account"
+                    className="block px-4 py-2 font-label text-xs tracking-[0.15em] uppercase text-cream-dim hover:text-cream transition-colors duration-200 no-underline"
+                  >
+                    Account
+                  </Link>
+                  {isAdmin && (
+                    <Link
+                      href="/admin"
+                      className="block px-4 py-2 font-label text-xs tracking-[0.15em] uppercase text-amber hover:text-amber-light transition-colors duration-200 no-underline"
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
+                </div>
+              )}
+            </div>
           ) : (
             <Link
               href={`/login?redirect=${encodeURIComponent(pathname)}`}
@@ -200,6 +259,15 @@ export function Nav() {
                 onClick={() => setIsOpen(false)}
               >
                 Sign In
+              </Link>
+            )}
+            {user && isAdmin && (
+              <Link
+                href="/admin"
+                className="block w-full text-center font-label text-[0.7rem] tracking-[0.18em] uppercase text-amber border border-amber py-3 no-underline hover:text-amber-light hover:border-amber-light transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                Admin Dashboard
               </Link>
             )}
           </div>
