@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { Subscriber } from "@/types/database";
 
 export const metadata = { title: "Admin — Subscribers" };
@@ -16,7 +16,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default async function AdminSubscribersPage() {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const { data: subscribers } = await supabase
     .from("subscribers")
     .select("*")

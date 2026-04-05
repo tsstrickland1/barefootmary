@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminTable } from "@/components/admin/AdminTable";
 import { deleteArticle } from "@/app/admin/_actions/articles";
 import type { Article } from "@/types/database";
@@ -6,7 +6,7 @@ import type { Article } from "@/types/database";
 export const metadata = { title: "Admin — Articles" };
 
 export default async function AdminArticlesPage() {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const { data: articles } = await supabase
     .from("articles")
     .select("*")

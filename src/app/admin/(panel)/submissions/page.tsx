@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { updateSubmissionStatus } from "@/app/admin/_actions/submissions";
 import type { Submission } from "@/types/database";
 
@@ -14,7 +14,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default async function AdminSubmissionsPage() {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const { data: submissions } = await supabase
     .from("submissions")
     .select("*")

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
 import { updateEpisode } from "@/app/admin/_actions/episodes";
 import type { Season } from "@/types/database";
@@ -12,7 +12,7 @@ export default async function EditEpisodePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const [{ data: episode }, { data: seasons }] = await Promise.all([
     supabase.from("episodes").select("*").eq("id", id).single(),
     supabase.from("seasons").select("id, title").order("number"),

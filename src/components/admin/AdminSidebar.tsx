@@ -14,7 +14,11 @@ const navItems = [
   { label: "Subscribers", href: "/admin/subscribers" },
 ];
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  onClose?: () => void;
+}
+
+export function AdminSidebar({ onClose }: AdminSidebarProps) {
   const pathname = usePathname();
 
   function isActive(href: string) {
@@ -24,13 +28,28 @@ export function AdminSidebar() {
 
   return (
     <aside className="w-56 shrink-0 min-h-screen bg-bg-surface border-r border-border flex flex-col">
-      <div className="px-6 py-8 border-b border-border">
-        <div className="font-label text-[0.6rem] tracking-[0.25em] uppercase text-amber mb-1">
-          Barefoot Mary
+      <div className="px-6 py-8 border-b border-border flex items-start justify-between">
+        <div>
+          <div className="font-label text-[0.6rem] tracking-[0.25em] uppercase text-amber mb-1">
+            Barefoot Mary
+          </div>
+          <div className="font-display text-[1.1rem] font-light text-cream leading-none">
+            Admin
+          </div>
         </div>
-        <div className="font-display text-[1.1rem] font-light text-cream leading-none">
-          Admin
-        </div>
+        {/* Close button — only visible on mobile */}
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="lg:hidden text-cream-dim hover:text-cream transition-colors mt-1 -mr-1"
+            aria-label="Close menu"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M2 2l12 12M14 2L2 14" />
+            </svg>
+          </button>
+        )}
       </div>
 
       <nav className="flex-1 py-4">
@@ -38,6 +57,7 @@ export function AdminSidebar() {
           <Link
             key={item.href}
             href={item.href}
+            onClick={onClose}
             className={`block px-6 py-2.5 font-label text-[0.7rem] tracking-[0.15em] uppercase transition-colors duration-150 no-underline ${
               isActive(item.href)
                 ? "text-amber bg-[rgba(196,154,60,0.08)] border-r-2 border-amber"
