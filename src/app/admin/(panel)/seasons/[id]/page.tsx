@@ -27,7 +27,7 @@ export default async function EditSeasonPage({
         Edit Season
       </h1>
 
-      <form action={updateSeason} encType="multipart/form-data" className="flex flex-col gap-6">
+      <form action={updateSeason} className="flex flex-col gap-6">
         <input type="hidden" name="id" value={season.id} />
 
         <div className="grid grid-cols-2 gap-6">

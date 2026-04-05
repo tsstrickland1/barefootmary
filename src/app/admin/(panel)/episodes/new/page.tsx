@@ -21,7 +21,7 @@ export default async function NewEpisodePage() {
         New Episode
       </h1>
 
-      <form action={createEpisode} encType="multipart/form-data" className="flex flex-col gap-6">
+      <form action={createEpisode} className="flex flex-col gap-6">
         <AdminFormField label="Season" name="season_id">
           <select id="season_id" name="season_id" required className="form-input">
             <option value="">Select a season…</option>

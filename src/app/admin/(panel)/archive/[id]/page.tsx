@@ -34,7 +34,7 @@ export default async function EditArchiveItemPage({
         Edit Archive Item
       </h1>
 
-      <form action={updateArchiveItem} encType="multipart/form-data" className="flex flex-col gap-6">
+      <form action={updateArchiveItem} className="flex flex-col gap-6">
         <input type="hidden" name="id" value={item.id} />
 
         <AdminFormField label="Title" name="title">

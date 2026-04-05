@@ -28,7 +28,7 @@ export default async function NewArticlePage() {
         New Article
       </h1>
 
-      <form action={createArticle} encType="multipart/form-data" className="flex flex-col gap-6">
+      <form action={createArticle} className="flex flex-col gap-6">
         <AdminFormField label="Title" name="title">
           <input id="title" name="title" type="text" required className="form-input" />
         </AdminFormField>
