@@ -1,19 +1,21 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
 import { createArchiveItem } from "@/app/admin/_actions/archive";
-import type { Season, Episode } from "@/types/database";
+import type { Season, Episode, Article } from "@/types/database";
 
 export const metadata = { title: "Admin — New Archive Item" };
 
 export default async function NewArchiveItemPage() {
   const supabase = createAdminClient();
-  const [{ data: seasons }, { data: episodes }] = await Promise.all([
+  const [{ data: seasons }, { data: episodes }, { data: articles }] = await Promise.all([
     supabase.from("seasons").select("id, title").order("number"),
     supabase.from("episodes").select("id, title, season_id").order("number"),
+    supabase.from("articles").select("id, title").order("created_at", { ascending: false }),
   ]);
 
   const seasonList = (seasons as Pick<Season, "id" | "title">[] ?? []);
   const episodeList = (episodes as Pick<Episode, "id" | "title" | "season_id">[] ?? []);
+  const articleList = (articles as Pick<Article, "id" | "title">[] ?? []);
 
   return (
     <div className="px-10 py-10 max-w-2xl">
@@ -67,6 +69,15 @@ export default async function NewArchiveItemPage() {
             <option value="">None</option>
             {episodeList.map((e) => (
               <option key={e.id} value={e.id}>{e.title}</option>
+            ))}
+          </select>
+        </AdminFormField>
+
+        <AdminFormField label="Related Field Note" name="article_id" hint="Associate this archive item with a field note">
+          <select id="article_id" name="article_id" className="form-input">
+            <option value="">None</option>
+            {articleList.map((a) => (
+              <option key={a.id} value={a.id}>{a.title}</option>
             ))}
           </select>
         </AdminFormField>

@@ -8,48 +8,102 @@ type ArchiveItem = {
   type: string;
   title: string;
   visibility: "public" | "subscriber" | "patron";
-  episode: string;
-  slug: string;
+  season_id: string | null;
+  episodes: { title: string; number: number } | null;
 };
 
-const typeFilters = ["All", "PDF", "IMG", "AUD", "TXT"] as const;
+type Season = {
+  id: string;
+  title: string;
+  numeral: string;
+};
 
-export function ArchiveGrid({ items }: { items: ArchiveItem[] }) {
-  const [activeFilter, setActiveFilter] = useState<string>("All");
+const typeFilters = ["All", "PDF", "Image", "Audio", "Transcript"] as const;
+
+export function ArchiveGrid({
+  items,
+  seasons,
+}: {
+  items: ArchiveItem[];
+  seasons: Season[];
+}) {
+  const [activeType, setActiveType] = useState<string>("All");
+  const [activeSeason, setActiveSeason] = useState<string>("All");
   const [query, setQuery] = useState("");
 
   const filtered = items.filter((item) => {
-    const matchesType = activeFilter === "All" || item.type === activeFilter;
-    const matchesQuery = item.title.toLowerCase().includes(query.toLowerCase());
-    return matchesType && matchesQuery;
+    const matchesType =
+      activeType === "All" ||
+      item.type.toLowerCase() === activeType.toLowerCase();
+    const matchesSeason =
+      activeSeason === "All" || item.season_id === activeSeason;
+    const matchesQuery = item.title
+      .toLowerCase()
+      .includes(query.toLowerCase());
+    return matchesType && matchesSeason && matchesQuery;
   });
 
   return (
     <>
-      {/* Type filter + search */}
-      <div className="flex items-center gap-4 flex-wrap mb-8">
-        {typeFilters.map((t) => (
-          <button
-            key={t}
-            onClick={() => setActiveFilter(t)}
-            className={`font-label text-[0.62rem] font-medium tracking-[0.14em] uppercase px-4 py-2 border cursor-pointer transition-all duration-200 ${
-              activeFilter === t
-                ? "text-bg-deep bg-amber border-amber"
-                : "text-cream-dim bg-transparent border-border hover:border-amber-dim hover:text-cream"
-            }`}
-          >
-            {t}
-          </button>
-        ))}
+      {/* Filters */}
+      <div className="flex flex-col gap-4 mb-8">
+        {/* Season filter */}
+        {seasons.length > 0 && (
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="font-label text-[0.58rem] tracking-[0.14em] uppercase text-cream-dim">
+              Season
+            </span>
+            <button
+              onClick={() => setActiveSeason("All")}
+              className={`font-label text-[0.62rem] font-medium tracking-[0.14em] uppercase px-4 py-2 border cursor-pointer transition-all duration-200 ${
+                activeSeason === "All"
+                  ? "text-bg-deep bg-amber border-amber"
+                  : "text-cream-dim bg-transparent border-border hover:border-amber-dim hover:text-cream"
+              }`}
+            >
+              All
+            </button>
+            {seasons.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setActiveSeason(s.id)}
+                className={`font-label text-[0.62rem] font-medium tracking-[0.14em] uppercase px-4 py-2 border cursor-pointer transition-all duration-200 ${
+                  activeSeason === s.id
+                    ? "text-bg-deep bg-amber border-amber"
+                    : "text-cream-dim bg-transparent border-border hover:border-amber-dim hover:text-cream"
+                }`}
+              >
+                Season {s.numeral}
+              </button>
+            ))}
+          </div>
+        )}
 
-        <div className="ml-auto">
-          <input
-            type="text"
-            placeholder="Search the archive..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="form-input w-64 text-[0.82rem]"
-          />
+        {/* Type filter + search */}
+        <div className="flex items-center gap-4 flex-wrap">
+          {typeFilters.map((t) => (
+            <button
+              key={t}
+              onClick={() => setActiveType(t)}
+              className={`font-label text-[0.62rem] font-medium tracking-[0.14em] uppercase px-4 py-2 border cursor-pointer transition-all duration-200 ${
+                activeType === t
+                  ? "text-bg-deep bg-amber border-amber"
+                  : "text-cream-dim bg-transparent border-border hover:border-amber-dim hover:text-cream"
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+
+          <div className="ml-auto">
+            <input
+              type="text"
+              placeholder="Search the archive..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="form-input w-64 text-[0.82rem]"
+            />
+          </div>
         </div>
       </div>
 
@@ -82,9 +136,11 @@ export function ArchiveGrid({ items }: { items: ArchiveItem[] }) {
               <div className="font-display text-[0.95rem] font-normal text-cream leading-[1.35]">
                 {item.title}
               </div>
-              <div className="font-label text-[0.58rem] text-cream-dim mt-auto">
-                Ref: {item.episode}
-              </div>
+              {item.episodes && (
+                <div className="font-label text-[0.58rem] text-cream-dim mt-auto">
+                  Ep. {item.episodes.number} — {item.episodes.title}
+                </div>
+              )}
             </Link>
           ))}
         </div>

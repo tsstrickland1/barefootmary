@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
 import { ArticleBodyEditor } from "@/components/admin/ArticleBodyEditor";
 import { updateArticle } from "@/app/admin/_actions/articles";
+import type { Season } from "@/types/database";
 
 export const metadata = { title: "Admin — Edit Article" };
 
@@ -23,13 +24,14 @@ export default async function EditArticlePage({
 }) {
   const { id } = await params;
   const supabase = createAdminClient();
-  const { data: article } = await supabase
-    .from("articles")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const [{ data: article }, { data: seasons }] = await Promise.all([
+    supabase.from("articles").select("*").eq("id", id).single(),
+    supabase.from("seasons").select("id, title, numeral").order("number"),
+  ]);
 
   if (!article) notFound();
+
+  const seasonList = (seasons as Pick<Season, "id" | "title" | "numeral">[] ?? []);
 
   const publishedLocal = article.published_at
     ? new Date(article.published_at).toISOString().slice(0, 16)
@@ -153,6 +155,20 @@ export default async function EditArticlePage({
           >
             <option value="false">No</option>
             <option value="true">Yes</option>
+          </select>
+        </AdminFormField>
+
+        <AdminFormField label="Season" name="season_id" hint="Associate this field note with a season">
+          <select
+            id="season_id"
+            name="season_id"
+            defaultValue={article.season_id ?? ""}
+            className="form-input"
+          >
+            <option value="">None</option>
+            {seasonList.map((s) => (
+              <option key={s.id} value={s.id}>Season {s.numeral} — {s.title}</option>
+            ))}
           </select>
         </AdminFormField>
 

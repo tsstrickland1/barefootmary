@@ -13,6 +13,7 @@ export async function createArchiveItem(formData: FormData) {
     visibility: formData.get("visibility") as string,
     episode_id: (formData.get("episode_id") as string) || null,
     season_id: (formData.get("season_id") as string) || null,
+    article_id: (formData.get("article_id") as string) || null,
   });
   if (error) throw new Error(error.message);
   redirect("/admin/archive");
@@ -31,6 +32,7 @@ export async function updateArchiveItem(formData: FormData) {
       visibility: formData.get("visibility") as string,
       episode_id: (formData.get("episode_id") as string) || null,
       season_id: (formData.get("season_id") as string) || null,
+      article_id: (formData.get("article_id") as string) || null,
     })
     .eq("id", id);
   if (error) throw new Error(error.message);
