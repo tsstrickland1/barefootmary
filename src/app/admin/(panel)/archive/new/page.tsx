@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
+import { ArchiveFileUploadField } from "@/components/admin/ArchiveFileUploadField";
 import { createArchiveItem } from "@/app/admin/_actions/archive";
 import type { Season, Episode, Article } from "@/types/database";
 
@@ -23,7 +24,7 @@ export default async function NewArchiveItemPage() {
         New Archive Item
       </h1>
 
-      <form action={createArchiveItem} className="flex flex-col gap-6">
+      <form action={createArchiveItem} encType="multipart/form-data" className="flex flex-col gap-6">
         <AdminFormField label="Title" name="title">
           <input id="title" name="title" type="text" required className="form-input" />
         </AdminFormField>
@@ -51,8 +52,8 @@ export default async function NewArchiveItemPage() {
           </AdminFormField>
         </div>
 
-        <AdminFormField label="File Path" name="file_path" hint="Storage path, e.g. archive/document.pdf">
-          <input id="file_path" name="file_path" type="text" required className="form-input" />
+        <AdminFormField label="File" name="archive_file">
+          <ArchiveFileUploadField />
         </AdminFormField>
 
         <AdminFormField label="Related Season" name="season_id">
