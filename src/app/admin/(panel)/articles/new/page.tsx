@@ -1,6 +1,8 @@
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
 import { ArticleBodyEditor } from "@/components/admin/ArticleBodyEditor";
 import { createArticle } from "@/app/admin/_actions/articles";
+import type { Season } from "@/types/database";
 
 export const metadata = { title: "Admin — New Article" };
 
@@ -14,7 +16,11 @@ const TAGS = [
   "deep-dive",
 ];
 
-export default function NewArticlePage() {
+export default async function NewArticlePage() {
+  const supabase = createAdminClient();
+  const { data: seasons } = await supabase.from("seasons").select("id, title, numeral").order("number");
+  const seasonList = (seasons as Pick<Season, "id" | "title" | "numeral">[] ?? []);
+
   return (
     <div className="px-10 py-10 max-w-3xl">
       <h1 className="font-display text-[2rem] font-light text-cream leading-none mb-8">
@@ -82,6 +88,15 @@ export default function NewArticlePage() {
           <select id="featured" name="featured" defaultValue="false" className="form-input">
             <option value="false">No</option>
             <option value="true">Yes</option>
+          </select>
+        </AdminFormField>
+
+        <AdminFormField label="Season" name="season_id" hint="Associate this field note with a season">
+          <select id="season_id" name="season_id" className="form-input">
+            <option value="">None</option>
+            {seasonList.map((s) => (
+              <option key={s.id} value={s.id}>Season {s.numeral} — {s.title}</option>
+            ))}
           </select>
         </AdminFormField>
 

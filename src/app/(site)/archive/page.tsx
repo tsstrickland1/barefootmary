@@ -1,13 +1,38 @@
+import { createClient } from "@/lib/supabase/server";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { ArchiveGrid } from "@/components/archive/ArchiveGrid";
-import { sampleArchiveItems } from "@/lib/sample-data";
+import type { Season } from "@/types/database";
 
 export const metadata = {
   title: "The Archive — Barefoot Mary",
   description: "Primary sources: documents, maps, photographs, and recordings.",
 };
 
-export default function ArchivePage() {
+export default async function ArchivePage() {
+  const supabase = await createClient();
+
+  const [{ data: items }, { data: seasons }] = await Promise.all([
+    supabase
+      .from("archive_items")
+      .select("id, title, type, visibility, season_id, episodes(title, number)")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("seasons")
+      .select("id, title, numeral")
+      .order("number"),
+  ]);
+
+  const archiveItems = (items ?? []) as {
+    id: string;
+    title: string;
+    type: string;
+    visibility: "public" | "subscriber" | "patron";
+    season_id: string | null;
+    episodes: { title: string; number: number } | null;
+  }[];
+
+  const seasonList = (seasons as Pick<Season, "id" | "title" | "numeral">[] ?? []);
+
   return (
     <section className="px-12 py-20 max-md:px-6 max-md:py-12">
       <SectionHeader label="Primary Sources" title="The Archive" />
@@ -26,7 +51,7 @@ export default function ArchivePage() {
         </p>
       </div>
 
-      <ArchiveGrid items={sampleArchiveItems} />
+      <ArchiveGrid items={archiveItems} seasons={seasonList} />
     </section>
   );
 }

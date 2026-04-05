@@ -46,12 +46,14 @@ export interface Article {
   image_url: string | null;
   published_at: string | null;
   created_at: string;
+  season_id: string | null;
 }
 
 export interface ArchiveItem {
   id: string;
   episode_id: string | null;
   season_id: string | null;
+  article_id: string | null;
   title: string;
   description: string | null;
   type: ArchiveType;

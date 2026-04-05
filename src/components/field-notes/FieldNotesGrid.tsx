@@ -6,28 +6,96 @@ import { useState } from "react";
 type Article = {
   slug: string;
   title: string;
-  excerpt: string;
+  excerpt: string | null;
   tag: string;
-  tagType: "free" | "locked";
-  byline: string;
-  featured: boolean;
+  visibility: "public" | "subscriber" | "patron";
+  author: string;
+  published_at: string | null;
   image_url: string | null;
+  season_id: string | null;
 };
 
-const tagFilters = ["All", "Essay", "Primary Source", "Interview", "Deep Dive", "Analysis"];
+type Season = {
+  id: string;
+  title: string;
+  numeral: string;
+};
+
+const tagFilters = [
+  "All",
+  "Essay",
+  "Primary Source",
+  "Interview",
+  "Deep Dive",
+  "Analysis",
+];
 
 function tagMatches(article: Article, activeTag: string): boolean {
   if (activeTag === "All") return true;
-  return article.tag.toLowerCase().includes(activeTag.toLowerCase());
+  return article.tag.toLowerCase().replace("-", " ").includes(activeTag.toLowerCase());
 }
 
-export function FieldNotesGrid({ articles }: { articles: Article[] }) {
-  const [activeTag, setActiveTag] = useState("All");
+function formatByline(article: Article): string {
+  const parts: string[] = [article.author];
+  if (article.published_at) {
+    const date = new Date(article.published_at);
+    parts.push(
+      date.toLocaleDateString("en-US", { month: "long", year: "numeric" })
+    );
+  }
+  return parts.join(" · ");
+}
 
-  const filtered = articles.filter((a) => tagMatches(a, activeTag));
+export function FieldNotesGrid({
+  articles,
+  seasons,
+}: {
+  articles: Article[];
+  seasons: Season[];
+}) {
+  const [activeTag, setActiveTag] = useState("All");
+  const [activeSeason, setActiveSeason] = useState("All");
+
+  const filtered = articles.filter(
+    (a) =>
+      tagMatches(a, activeTag) &&
+      (activeSeason === "All" || a.season_id === activeSeason)
+  );
 
   return (
     <>
+      {/* Season filter */}
+      {seasons.length > 0 && (
+        <div className="flex items-center gap-3 flex-wrap mb-4">
+          <span className="font-label text-[0.58rem] tracking-[0.14em] uppercase text-cream-dim">
+            Season
+          </span>
+          <button
+            onClick={() => setActiveSeason("All")}
+            className={`font-label text-[0.62rem] font-medium tracking-[0.14em] uppercase px-4 py-2 border cursor-pointer transition-all duration-200 ${
+              activeSeason === "All"
+                ? "text-bg-deep bg-amber border-amber"
+                : "text-cream-dim bg-transparent border-border hover:border-amber-dim hover:text-cream"
+            }`}
+          >
+            All
+          </button>
+          {seasons.map((s) => (
+            <button
+              key={s.id}
+              onClick={() => setActiveSeason(s.id)}
+              className={`font-label text-[0.62rem] font-medium tracking-[0.14em] uppercase px-4 py-2 border cursor-pointer transition-all duration-200 ${
+                activeSeason === s.id
+                  ? "text-bg-deep bg-amber border-amber"
+                  : "text-cream-dim bg-transparent border-border hover:border-amber-dim hover:text-cream"
+              }`}
+            >
+              Season {s.numeral}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Tag filter bar */}
       <div className="flex gap-3 flex-wrap mb-10">
         {tagFilters.map((tag) => (
@@ -74,15 +142,17 @@ export function FieldNotesGrid({ articles }: { articles: Article[] }) {
               <div className="p-8 flex flex-col gap-3 flex-1">
                 <div
                   className={`font-label text-[0.6rem] font-semibold tracking-[0.16em] uppercase flex items-center gap-1.5 ${
-                    article.tagType === "free" ? "text-teal-light" : "text-amber"
+                    article.visibility === "public"
+                      ? "text-teal-light"
+                      : "text-amber"
                   }`}
                 >
-                  {article.tagType === "locked" && (
+                  {article.visibility !== "public" && (
                     <span className="inline-flex items-center justify-center w-[13px] h-[13px] border border-amber-dim text-[8px] leading-none rounded-sm">
                       🔒
                     </span>
                   )}
-                  {article.tag}
+                  {article.tag.replace(/-/g, " ")}
                 </div>
                 <div className="font-display text-[1.25rem] font-normal text-cream leading-[1.2]">
                   {article.title}
@@ -93,7 +163,7 @@ export function FieldNotesGrid({ articles }: { articles: Article[] }) {
                   </p>
                 )}
                 <div className="font-label text-[0.62rem] tracking-[0.1em] text-cream-dim mt-auto pt-2">
-                  {article.byline}
+                  {formatByline(article)}
                 </div>
               </div>
             </Link>

@@ -19,6 +19,7 @@ export async function createArticle(formData: FormData) {
     featured: formData.get("featured") === "true",
     image_url: (formData.get("image_url") as string) || null,
     published_at: (formData.get("published_at") as string) || null,
+    season_id: (formData.get("season_id") as string) || null,
   });
   if (error) throw new Error(error.message);
   redirect("/admin/articles");
@@ -43,6 +44,7 @@ export async function updateArticle(formData: FormData) {
       featured: formData.get("featured") === "true",
       image_url: (formData.get("image_url") as string) || null,
       published_at: (formData.get("published_at") as string) || null,
+      season_id: (formData.get("season_id") as string) || null,
     })
     .eq("id", id);
   if (error) throw new Error(error.message);
