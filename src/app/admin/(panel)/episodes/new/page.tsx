@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { createEpisode } from "@/app/admin/_actions/episodes";
 import type { Season } from "@/types/database";
 
@@ -20,7 +21,7 @@ export default async function NewEpisodePage() {
         New Episode
       </h1>
 
-      <form action={createEpisode} className="flex flex-col gap-6">
+      <form action={createEpisode} encType="multipart/form-data" className="flex flex-col gap-6">
         <AdminFormField label="Season" name="season_id">
           <select id="season_id" name="season_id" required className="form-input">
             <option value="">Select a season…</option>
@@ -68,8 +69,8 @@ export default async function NewEpisodePage() {
           <input id="peaks_json_url" name="peaks_json_url" type="url" className="form-input" />
         </AdminFormField>
 
-        <AdminFormField label="Image URL" name="image_url">
-          <input id="image_url" name="image_url" type="url" className="form-input" />
+        <AdminFormField label="Featured Image" name="image_file">
+          <ImageUploadField />
         </AdminFormField>
 
         <AdminFormField label="Visibility" name="visibility">
