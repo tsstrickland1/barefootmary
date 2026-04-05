@@ -1,24 +1,33 @@
 import Link from "next/link";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { createClient } from "@/lib/supabase/server";
+import type { Season } from "@/types/database";
 
-const seasons = [
-  {
-    slug: "season-1",
-    number: "One",
-    numeral: "I",
-    title: "Tunnel Vision",
-    subtitle: "A descent through Pensacola's hidden underground",
-    episodes: 9,
-    status: "Now Airing",
-  },
-];
+const ordinalWords = ["One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten"];
+
+function numberToWord(n: number): string {
+  return ordinalWords[n - 1] ?? String(n);
+}
+
+function statusLabel(status: Season["status"]): string {
+  if (status === "airing") return "Now Airing";
+  if (status === "upcoming") return "Upcoming";
+  return "Complete";
+}
 
 export const metadata = {
   title: "Episodes — Barefoot Mary",
   description: "Browse all seasons and episodes of Barefoot Mary.",
 };
 
-export default function EpisodesPage() {
+export default async function EpisodesPage() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("seasons")
+    .select("*")
+    .order("number", { ascending: true });
+  const seasons: Season[] = data ?? [];
+
   return (
     <section className="px-12 py-20 max-md:px-6 max-md:py-12">
       <SectionHeader label="Browse" title="All Seasons" />
@@ -36,7 +45,7 @@ export default function EpisodesPage() {
 
             <div>
               <div className="font-label text-[0.65rem] font-semibold tracking-[0.22em] uppercase text-teal-light mb-2">
-                Season {season.number}
+                Season {numberToWord(season.number)}
               </div>
               <div className="font-display text-[2.5rem] font-light text-cream leading-none mb-2">
                 {season.title}
@@ -47,11 +56,8 @@ export default function EpisodesPage() {
             </div>
 
             <div className="flex items-center gap-6">
-              <div className="font-label text-[0.72rem] tracking-[0.1em] uppercase text-cream-dim">
-                {season.episodes} Episodes
-              </div>
               <div className="font-label text-[0.62rem] font-semibold tracking-[0.18em] uppercase text-amber bg-[rgba(196,154,60,0.08)] px-3 py-1.5">
-                {season.status}
+                {statusLabel(season.status)}
               </div>
             </div>
           </Link>

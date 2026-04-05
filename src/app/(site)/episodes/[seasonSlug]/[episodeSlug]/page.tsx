@@ -1,27 +1,41 @@
 import Link from "next/link";
-import { sampleEpisodes, sampleArchiveItems } from "@/lib/sample-data";
+import { notFound } from "next/navigation";
+import { sampleArchiveItems } from "@/lib/sample-data";
+import { createClient } from "@/lib/supabase/server";
 
-export const metadata = {
-  title: "Episode — Barefoot Mary",
-};
+const ordinalWords = ["One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten"];
+
+function numberToWord(n: number): string {
+  return ordinalWords[n - 1] ?? String(n);
+}
 
 export default async function EpisodePage({
   params,
 }: {
   params: Promise<{ seasonSlug: string; episodeSlug: string }>;
 }) {
-  const { episodeSlug } = await params;
-  const episode = sampleEpisodes.find((ep) => ep.slug === episodeSlug);
+  const { seasonSlug, episodeSlug } = await params;
+  const supabase = await createClient();
 
-  if (!episode) {
-    return (
-      <section className="px-12 py-20 text-center">
-        <h1 className="font-display text-3xl text-cream">Episode not found</h1>
-      </section>
-    );
-  }
+  const { data: season } = await supabase
+    .from("seasons")
+    .select("id, title, number, slug")
+    .eq("slug", seasonSlug)
+    .single();
+
+  const { data: episode } = season
+    ? await supabase
+        .from("episodes")
+        .select("*")
+        .eq("slug", episodeSlug)
+        .eq("season_id", season.id)
+        .single()
+    : { data: null };
+
+  if (!season || !episode) notFound();
 
   const isFree = episode.visibility === "public";
+  const seasonLabel = `Season ${numberToWord(season.number)}`;
   const relatedArchive = sampleArchiveItems.filter(
     (item) => item.episode === `Episode ${episode.number}`
   );
@@ -34,8 +48,8 @@ export default async function EpisodePage({
           Episodes
         </Link>
         <span className="text-amber">/</span>
-        <Link href={`/episodes/${episode.seasonSlug}`} className="text-cream-dim no-underline hover:text-cream transition-colors duration-200">
-          Season One
+        <Link href={`/episodes/${season.slug}`} className="text-cream-dim no-underline hover:text-cream transition-colors duration-200">
+          {seasonLabel}
         </Link>
         <span className="text-amber">/</span>
         <span className="text-amber">Ep. {episode.number}</span>
