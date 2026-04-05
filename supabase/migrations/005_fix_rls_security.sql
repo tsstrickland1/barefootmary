@@ -1,18 +1,22 @@
 -- 005_fix_rls_security.sql
 --
--- Fixes three RLS/storage security gaps identified in audit:
+-- Fixes three RLS / storage security gaps identified in audit:
 --
 --   1. profiles.is_admin could be self-escalated by any authenticated user
---   2. audio storage was readable by anon (no subscription required)
---   3. archive storage was readable by any authenticated user (no subscription required)
+--   2. audio storage had no subscription enforcement (all objects readable by anon)
+--   3. archive storage had no subscription enforcement (readable by any authenticated user)
+--
+-- Free-tier / public content remains accessible to unauthenticated users.
+-- Storage policies join to the content tables so visibility is enforced
+-- per-object, consistent with the episode / article RLS on the DB tables.
 
--- ── 1. Lock is_admin against client-side changes ─────────────────────────────
+
+-- ── 1. Lock is_admin against client-side changes ────────────────────────────
 --
 -- The previous policy only checked that the row ID matched auth.uid(), which
--- allowed any authenticated user to run:
---   supabase.from('profiles').update({ is_admin: true }).eq('id', userId)
--- and gain full admin panel access. The new with check re-reads the current
--- is_admin value so a client can never change it in either direction.
+-- allowed any authenticated user to self-grant admin access. The new
+-- with check re-reads the stored is_admin value so a client can never change
+-- it in either direction.
 
 drop policy "Users can update own profile" on public.profiles;
 
@@ -25,41 +29,84 @@ create policy "Users can update own profile"
   );
 
 
--- ── 2. Restrict audio storage to authenticated users ─────────────────────────
+-- ── 2. Audio storage: gate by episode visibility ─────────────────────────────
 --
--- The previous policy granted anon read access to every object in the audio
--- bucket. Episode row RLS hides audio_url from unauthenticated DB queries, but
--- anyone who obtained or guessed a storage URL could stream subscriber audio
--- without credentials. Requiring authentication closes that gap.
---
--- Note: for full subscriber-only enforcement, audio URLs for gated episodes
--- should be delivered as short-lived signed URLs generated server-side after
--- a subscription check, not as permanent public URLs.
+-- Public episodes must remain streamable by unauthenticated users.
+-- Subscriber / patron episode audio requires an active subscription.
+-- The join on audio_url ensures only files actually referenced by an episode
+-- are accessible (no guessing random object names in the bucket).
 
 drop policy "Public audio readable" on storage.objects;
 
-create policy "Audio readable by authenticated users" on storage.objects
-  for select to authenticated
-  using (bucket_id = 'audio');
+create policy "Public episode audio readable by everyone"
+  on storage.objects for select to anon, authenticated
+  using (
+    bucket_id = 'audio'
+    and exists (
+      select 1 from public.episodes e
+      where e.visibility = 'public'
+        and e.audio_url is not null
+        and e.audio_url like '%' || name
+    )
+  );
+
+create policy "Subscriber audio readable by active subscribers"
+  on storage.objects for select to authenticated
+  using (
+    bucket_id = 'audio'
+    and exists (
+      select 1 from public.episodes e
+      where e.visibility in ('subscriber', 'patron')
+        and e.audio_url is not null
+        and e.audio_url like '%' || name
+        and exists (
+          select 1 from public.subscribers s
+          where s.user_id = auth.uid()
+            and s.status = 'active'
+            and (
+              (e.visibility = 'subscriber' and s.plan in ('descender', 'patron'))
+              or (e.visibility = 'patron' and s.plan = 'patron')
+            )
+        )
+    )
+  );
 
 
--- ── 3. Restrict archive storage to active subscribers ────────────────────────
+-- ── 3. Archive storage: gate by archive_item visibility ──────────────────────
 --
--- The previous policy required only authentication, not a subscription. Any
--- free-tier logged-in user who had an archive file path could download the
--- file directly. This policy enforces the same plan-tier check used for
--- archive_items row visibility.
+-- Public archive items must be downloadable by unauthenticated users.
+-- Subscriber / patron archive files require an active subscription.
+-- The join on file_path mirrors the episode visibility pattern above.
 
 drop policy "Authenticated can read archive" on storage.objects;
 
-create policy "Subscribers can read archive" on storage.objects
-  for select to authenticated
+create policy "Public archive files readable by everyone"
+  on storage.objects for select to anon, authenticated
   using (
     bucket_id = 'archive'
     and exists (
-      select 1 from public.subscribers s
-      where s.user_id = auth.uid()
-        and s.status = 'active'
-        and s.plan in ('descender', 'patron')
+      select 1 from public.archive_items ai
+      where ai.visibility = 'public'
+        and ai.file_path like '%' || name
+    )
+  );
+
+create policy "Subscriber archive files readable by active subscribers"
+  on storage.objects for select to authenticated
+  using (
+    bucket_id = 'archive'
+    and exists (
+      select 1 from public.archive_items ai
+      where ai.visibility in ('subscriber', 'patron')
+        and ai.file_path like '%' || name
+        and exists (
+          select 1 from public.subscribers s
+          where s.user_id = auth.uid()
+            and s.status = 'active'
+            and (
+              (ai.visibility = 'subscriber' and s.plan in ('descender', 'patron'))
+              or (ai.visibility = 'patron' and s.plan = 'patron')
+            )
+        )
     )
   );
