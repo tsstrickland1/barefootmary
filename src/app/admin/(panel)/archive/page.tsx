@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminTable } from "@/components/admin/AdminTable";
 import { deleteArchiveItem } from "@/app/admin/_actions/archive";
 import type { ArchiveItem } from "@/types/database";
@@ -6,7 +6,7 @@ import type { ArchiveItem } from "@/types/database";
 export const metadata = { title: "Admin — Archive" };
 
 export default async function AdminArchivePage() {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const { data: items } = await supabase
     .from("archive_items")
     .select("*")

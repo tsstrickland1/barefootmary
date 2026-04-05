@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { AdminShell } from "@/components/admin/AdminShell";
 
 export default async function AdminPanelLayout({
   children,
@@ -12,14 +13,20 @@ export default async function AdminPanelLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user || !user.user_metadata?.is_admin) {
+  if (!user) {
     redirect("/admin/login");
   }
 
-  return (
-    <div className="min-h-screen bg-bg-deep flex">
-      <AdminSidebar />
-      <main className="flex-1 overflow-auto">{children}</main>
-    </div>
-  );
+  const adminClient = createAdminClient();
+  const { data: profile } = await adminClient
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile?.is_admin) {
+    redirect("/admin/login");
+  }
+
+  return <AdminShell>{children}</AdminShell>;
 }

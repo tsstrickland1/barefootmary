@@ -1,6 +1,5 @@
-"use client";
-
 import Link from "next/link";
+import { DeleteButton } from "@/components/admin/DeleteButton";
 
 export interface AdminTableColumn<T> {
   header: string;
@@ -79,24 +78,7 @@ export function AdminTable<T extends { id: string }>({
                       >
                         Edit
                       </Link>
-                      <form
-                        action={deleteAction}
-                        onSubmit={(e) => {
-                          if (
-                            !confirm("Delete this item? This cannot be undone.")
-                          ) {
-                            e.preventDefault();
-                          }
-                        }}
-                      >
-                        <input type="hidden" name="id" value={row.id} />
-                        <button
-                          type="submit"
-                          className="font-label text-[0.65rem] tracking-[0.15em] uppercase text-[#e07070] hover:text-cream transition-colors"
-                        >
-                          Delete
-                        </button>
-                      </form>
+                      <DeleteButton id={row.id} deleteAction={deleteAction} />
                     </div>
                   </td>
                 </tr>

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
 import { updateArchiveItem } from "@/app/admin/_actions/archive";
 import type { Season, Episode } from "@/types/database";
@@ -12,7 +12,7 @@ export default async function EditArchiveItemPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const [{ data: item }, { data: seasons }, { data: episodes }] =
     await Promise.all([
       supabase.from("archive_items").select("*").eq("id", id).single(),

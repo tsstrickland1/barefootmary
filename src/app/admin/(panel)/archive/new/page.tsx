@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
 import { createArchiveItem } from "@/app/admin/_actions/archive";
 import type { Season, Episode } from "@/types/database";
@@ -6,7 +6,7 @@ import type { Season, Episode } from "@/types/database";
 export const metadata = { title: "Admin — New Archive Item" };
 
 export default async function NewArchiveItemPage() {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const [{ data: seasons }, { data: episodes }] = await Promise.all([
     supabase.from("seasons").select("id, title").order("number"),
     supabase.from("episodes").select("id, title, season_id").order("number"),

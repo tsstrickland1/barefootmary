@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminTable } from "@/components/admin/AdminTable";
 import { deleteEpisode } from "@/app/admin/_actions/episodes";
 import type { Episode, Season } from "@/types/database";
@@ -6,7 +6,7 @@ import type { Episode, Season } from "@/types/database";
 export const metadata = { title: "Admin — Episodes" };
 
 export default async function AdminEpisodesPage() {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const [{ data: episodes }, { data: seasons }] = await Promise.all([
     supabase
       .from("episodes")

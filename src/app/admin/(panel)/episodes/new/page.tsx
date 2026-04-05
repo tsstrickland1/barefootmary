@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
 import { createEpisode } from "@/app/admin/_actions/episodes";
 import type { Season } from "@/types/database";
@@ -6,7 +6,7 @@ import type { Season } from "@/types/database";
 export const metadata = { title: "Admin — New Episode" };
 
 export default async function NewEpisodePage() {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const { data: seasons } = await supabase
     .from("seasons")
     .select("id, title")

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { Submission } from "@/types/database";
 
 export const metadata = {
@@ -14,7 +14,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 async function getCounts() {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const [seasons, episodes, articles, archive, submissions, subscribers] =
     await Promise.all([
       supabase.from("seasons").select("id", { count: "exact", head: true }),
@@ -40,7 +40,7 @@ async function getCounts() {
 }
 
 async function getRecentSubmissions(): Promise<Submission[]> {
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const { data } = await supabase
     .from("submissions")
     .select("*")

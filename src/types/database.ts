@@ -73,10 +73,10 @@ export interface Submission {
 export interface Subscriber {
   id: string;
   user_id: string;
-  stripe_customer_id: string;
-  stripe_subscription_id: string;
-  plan: "descender" | "patron";
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
+  plan: "free" | "descender" | "patron";
   status: "active" | "canceled" | "past_due";
-  current_period_end: string;
+  current_period_end: string | null;
   created_at: string;
 }

@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function loginAction(
   _prevState: string | null,
@@ -20,7 +21,15 @@ export async function loginAction(
     return error?.message ?? "Login failed.";
   }
 
-  if (!data.user.user_metadata?.is_admin) {
+  // Check profiles table for admin flag (service role bypasses RLS)
+  const adminClient = createAdminClient();
+  const { data: profile } = await adminClient
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", data.user.id)
+    .single();
+
+  if (!profile?.is_admin) {
     await supabase.auth.signOut();
     return "Access denied.";
   }

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
 import { ArticleBodyEditor } from "@/components/admin/ArticleBodyEditor";
 import { updateArticle } from "@/app/admin/_actions/articles";
@@ -22,7 +22,7 @@ export default async function EditArticlePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createClient();
+  const supabase = createAdminClient();
   const { data: article } = await supabase
     .from("articles")
     .select("*")
