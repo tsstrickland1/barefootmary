@@ -44,12 +44,12 @@ export function AdminTable<T extends { id: string }>({
                 {columns.map((col) => (
                   <th
                     key={col.header}
-                    className="text-left px-4 py-3 font-label text-[0.6rem] tracking-[0.2em] uppercase text-cream-dim"
+                    className="text-left px-4 py-3 font-label text-[0.7rem] tracking-[0.2em] uppercase text-cream-dim"
                   >
                     {col.header}
                   </th>
                 ))}
-                <th className="px-4 py-3 font-label text-[0.6rem] tracking-[0.2em] uppercase text-cream-dim text-right">
+                <th className="px-4 py-3 font-label text-[0.7rem] tracking-[0.2em] uppercase text-cream-dim text-right">
                   Actions
                 </th>
               </tr>
@@ -74,7 +74,7 @@ export function AdminTable<T extends { id: string }>({
                     <div className="flex items-center justify-end gap-4">
                       <Link
                         href={editHref(row)}
-                        className="font-label text-[0.65rem] tracking-[0.15em] uppercase text-teal-light hover:text-cream transition-colors no-underline"
+                        className="font-label text-[0.75rem] tracking-[0.15em] uppercase text-teal-light hover:text-cream transition-colors no-underline"
                       >
                         Edit
                       </Link>

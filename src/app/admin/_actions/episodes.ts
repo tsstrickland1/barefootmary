@@ -25,8 +25,8 @@ export async function createEpisode(formData: FormData) {
     visibility: formData.get("visibility") as string,
     published_at: (formData.get("published_at") as string) || null,
   });
-  if (error) throw new Error(error.message);
-  redirect("/admin/episodes");
+  if (error) redirect(`/admin/episodes?error=${encodeURIComponent(error.message)}`);
+  redirect("/admin/episodes?success=Episode+created");
 }
 
 export async function updateEpisode(formData: FormData) {
@@ -48,14 +48,14 @@ export async function updateEpisode(formData: FormData) {
       published_at: (formData.get("published_at") as string) || null,
     })
     .eq("id", id);
-  if (error) throw new Error(error.message);
-  redirect("/admin/episodes");
+  if (error) redirect(`/admin/episodes/${id}?error=${encodeURIComponent(error.message)}`);
+  redirect(`/admin/episodes/${id}?success=Episode+saved`);
 }
 
 export async function deleteEpisode(formData: FormData) {
   const supabase = createAdminClient();
   const id = formData.get("id") as string;
   const { error } = await supabase.from("episodes").delete().eq("id", id);
-  if (error) throw new Error(error.message);
-  redirect("/admin/episodes");
+  if (error) redirect(`/admin/episodes?error=${encodeURIComponent(error.message)}`);
+  redirect("/admin/episodes?success=Episode+deleted");
 }

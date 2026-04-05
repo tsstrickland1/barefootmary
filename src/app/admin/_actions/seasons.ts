@@ -22,8 +22,8 @@ export async function createSeason(formData: FormData) {
     status: formData.get("status") as string,
     image_url: await resolveImageUrl(formData),
   });
-  if (error) throw new Error(error.message);
-  redirect("/admin/seasons");
+  if (error) redirect(`/admin/seasons?error=${encodeURIComponent(error.message)}`);
+  redirect("/admin/seasons?success=Season+created");
 }
 
 export async function updateSeason(formData: FormData) {
@@ -42,14 +42,14 @@ export async function updateSeason(formData: FormData) {
       image_url: await resolveImageUrl(formData),
     })
     .eq("id", id);
-  if (error) throw new Error(error.message);
-  redirect("/admin/seasons");
+  if (error) redirect(`/admin/seasons/${id}?error=${encodeURIComponent(error.message)}`);
+  redirect(`/admin/seasons/${id}?success=Season+saved`);
 }
 
 export async function deleteSeason(formData: FormData) {
   const supabase = createAdminClient();
   const id = formData.get("id") as string;
   const { error } = await supabase.from("seasons").delete().eq("id", id);
-  if (error) throw new Error(error.message);
-  redirect("/admin/seasons");
+  if (error) redirect(`/admin/seasons?error=${encodeURIComponent(error.message)}`);
+  redirect("/admin/seasons?success=Season+deleted");
 }

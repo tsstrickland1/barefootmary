@@ -27,10 +27,10 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
   }
 
   return (
-    <aside className="w-56 shrink-0 min-h-screen bg-bg-surface border-r border-border flex flex-col">
+    <aside className="w-56 shrink-0 h-full bg-bg-surface border-r border-border flex flex-col">
       <div className="px-6 py-8 border-b border-border flex items-start justify-between">
         <div>
-          <div className="font-label text-[0.6rem] tracking-[0.25em] uppercase text-amber mb-1">
+          <div className="font-label text-[0.7rem] tracking-[0.25em] uppercase text-amber mb-1">
             Barefoot Mary
           </div>
           <div className="font-display text-[1.1rem] font-light text-cream leading-none">
@@ -73,7 +73,7 @@ export function AdminSidebar({ onClose }: AdminSidebarProps) {
         <form action={logoutAction}>
           <button
             type="submit"
-            className="font-label text-[0.65rem] tracking-[0.15em] uppercase text-cream-dim hover:text-cream transition-colors duration-150"
+            className="font-label text-[0.75rem] tracking-[0.15em] uppercase text-cream-dim hover:text-cream transition-colors duration-150"
           >
             Sign Out
           </button>

@@ -7,7 +7,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-bg-deep flex">
+    <div className="h-screen bg-bg-deep flex overflow-hidden">
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 h-14 bg-bg-surface border-b border-border">
         <button
@@ -21,7 +21,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <span className="block w-5 h-px bg-cream" />
         </button>
         <div className="flex flex-col items-end">
-          <div className="font-label text-[0.55rem] tracking-[0.25em] uppercase text-amber leading-none mb-0.5">
+          <div className="font-label text-[0.65rem] tracking-[0.25em] uppercase text-amber leading-none mb-0.5">
             Barefoot Mary
           </div>
           <div className="font-display text-[0.9rem] font-light text-cream leading-none">

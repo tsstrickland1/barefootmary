@@ -28,8 +28,8 @@ export async function createArticle(formData: FormData) {
     published_at: (formData.get("published_at") as string) || null,
     season_id: (formData.get("season_id") as string) || null,
   });
-  if (error) throw new Error(error.message);
-  redirect("/admin/articles");
+  if (error) redirect(`/admin/articles?error=${encodeURIComponent(error.message)}`);
+  redirect("/admin/articles?success=Article+created");
 }
 
 export async function updateArticle(formData: FormData) {
@@ -54,14 +54,14 @@ export async function updateArticle(formData: FormData) {
       season_id: (formData.get("season_id") as string) || null,
     })
     .eq("id", id);
-  if (error) throw new Error(error.message);
-  redirect("/admin/articles");
+  if (error) redirect(`/admin/articles/${id}?error=${encodeURIComponent(error.message)}`);
+  redirect(`/admin/articles/${id}?success=Article+saved`);
 }
 
 export async function deleteArticle(formData: FormData) {
   const supabase = createAdminClient();
   const id = formData.get("id") as string;
   const { error } = await supabase.from("articles").delete().eq("id", id);
-  if (error) throw new Error(error.message);
-  redirect("/admin/articles");
+  if (error) redirect(`/admin/articles?error=${encodeURIComponent(error.message)}`);
+  redirect("/admin/articles?success=Article+deleted");
 }

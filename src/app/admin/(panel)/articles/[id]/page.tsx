@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
 import { ArticleBodyEditor } from "@/components/admin/ArticleBodyEditor";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { updateArticle } from "@/app/admin/_actions/articles";
-import type { Season } from "@/types/database";
+import type { Season, ArchiveItem } from "@/types/database";
 
 export const metadata = { title: "Admin — Edit Article" };
 
@@ -25,14 +26,20 @@ export default async function EditArticlePage({
 }) {
   const { id } = await params;
   const supabase = createAdminClient();
-  const [{ data: article }, { data: seasons }] = await Promise.all([
+  const [{ data: article }, { data: seasons }, { data: archiveItems }] = await Promise.all([
     supabase.from("articles").select("*").eq("id", id).single(),
     supabase.from("seasons").select("id, title, numeral").order("number"),
+    supabase
+      .from("archive_items")
+      .select("id, title, type, visibility")
+      .eq("article_id", id)
+      .order("created_at"),
   ]);
 
   if (!article) notFound();
 
   const seasonList = (seasons as Pick<Season, "id" | "title" | "numeral">[] ?? []);
+  const itemList = (archiveItems as Pick<ArchiveItem, "id" | "title" | "type" | "visibility">[] ?? []);
 
   const publishedLocal = article.published_at
     ? new Date(article.published_at).toISOString().slice(0, 16)
@@ -182,6 +189,58 @@ export default async function EditArticlePage({
           </a>
         </div>
       </form>
+
+      {/* Archive Items */}
+      <div className="mt-12 pt-10 border-t border-border">
+        <div className="flex items-baseline justify-between mb-6">
+          <h2 className="font-display text-[1.3rem] font-light text-cream leading-none">
+            Archive Items
+          </h2>
+          <Link
+            href={`/admin/archive/new?article_id=${article.id}`}
+            className="bg-amber text-bg-deep font-label text-[0.7rem] font-semibold tracking-[0.18em] uppercase px-4 py-2 transition-opacity hover:opacity-80 no-underline"
+          >
+            + Add Archive Item
+          </Link>
+        </div>
+
+        {itemList.length === 0 ? (
+          <p className="text-cream-dim font-body text-sm">No archive items yet.</p>
+        ) : (
+          <div className="border border-border overflow-hidden">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-bg-raised border-b border-border">
+                  <th className="text-left px-4 py-3 font-label text-[0.7rem] tracking-[0.2em] uppercase text-cream-dim">Title</th>
+                  <th className="text-left px-4 py-3 font-label text-[0.7rem] tracking-[0.2em] uppercase text-cream-dim">Type</th>
+                  <th className="text-left px-4 py-3 font-label text-[0.7rem] tracking-[0.2em] uppercase text-cream-dim">Visibility</th>
+                  <th className="px-4 py-3 font-label text-[0.7rem] tracking-[0.2em] uppercase text-cream-dim text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {itemList.map((item, i) => (
+                  <tr
+                    key={item.id}
+                    className={`border-b border-border last:border-0 ${i % 2 === 0 ? "bg-bg-surface" : "bg-bg-deep"}`}
+                  >
+                    <td className="px-4 py-3 text-[0.85rem] text-cream font-body">{item.title}</td>
+                    <td className="px-4 py-3 font-label text-[0.7rem] tracking-[0.1em] uppercase text-cream-dim">{item.type}</td>
+                    <td className="px-4 py-3 font-label text-[0.7rem] tracking-[0.1em] uppercase text-cream-dim">{item.visibility}</td>
+                    <td className="px-4 py-3 text-right">
+                      <Link
+                        href={`/admin/archive/${item.id}`}
+                        className="font-label text-[0.75rem] tracking-[0.15em] uppercase text-teal-light hover:text-cream transition-colors no-underline"
+                      >
+                        Edit
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
