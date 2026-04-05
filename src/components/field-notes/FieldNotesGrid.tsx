@@ -55,6 +55,10 @@ export function FieldNotesGrid({
 }) {
   const [activeTag, setActiveTag] = useState("All");
   const [activeSeason, setActiveSeason] = useState("All");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  const activeFilterCount =
+    (activeSeason !== "All" ? 1 : 0) + (activeTag !== "All" ? 1 : 0);
 
   const filtered = articles.filter(
     (a) =>
@@ -64,53 +68,77 @@ export function FieldNotesGrid({
 
   return (
     <>
-      {/* Season filter */}
-      {seasons.length > 0 && (
-        <div className="flex items-center gap-3 flex-wrap mb-4">
-          <span className="font-label text-[0.58rem] tracking-[0.14em] uppercase text-cream-dim">
-            Season
+      {/* Mobile toggle */}
+      <div className="md:hidden mb-4">
+        <button
+          onClick={() => setFiltersOpen((o) => !o)}
+          className="flex items-center gap-2 font-label text-[0.62rem] font-medium tracking-[0.14em] uppercase px-4 py-2 border border-border text-cream-dim cursor-pointer transition-all duration-200 hover:border-amber-dim hover:text-cream"
+        >
+          <span>Filters</span>
+          {activeFilterCount > 0 && (
+            <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber text-bg-deep text-[0.55rem] font-semibold leading-none">
+              {activeFilterCount}
+            </span>
+          )}
+          <span className="ml-1 text-[0.7rem] leading-none">
+            {filtersOpen ? "▲" : "▼"}
           </span>
-          <button
-            onClick={() => setActiveSeason("All")}
-            className={`font-label text-[0.62rem] font-medium tracking-[0.14em] uppercase px-4 py-2 border cursor-pointer transition-all duration-200 ${
-              activeSeason === "All"
-                ? "text-bg-deep bg-amber border-amber"
-                : "text-cream-dim bg-transparent border-border hover:border-amber-dim hover:text-cream"
-            }`}
-          >
-            All
-          </button>
-          {seasons.map((s) => (
+        </button>
+      </div>
+
+      {/* Filter rows — always visible on md+, toggled on mobile */}
+      <div className={`${filtersOpen ? "flex" : "hidden"} md:flex flex-col gap-4 mb-10`}>
+        {/* Season filter */}
+        {seasons.length > 0 && (
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="font-label text-[0.58rem] tracking-[0.14em] uppercase text-cream-dim w-10 shrink-0">
+              Season
+            </span>
             <button
-              key={s.id}
-              onClick={() => setActiveSeason(s.id)}
+              onClick={() => setActiveSeason("All")}
               className={`font-label text-[0.62rem] font-medium tracking-[0.14em] uppercase px-4 py-2 border cursor-pointer transition-all duration-200 ${
-                activeSeason === s.id
+                activeSeason === "All"
                   ? "text-bg-deep bg-amber border-amber"
                   : "text-cream-dim bg-transparent border-border hover:border-amber-dim hover:text-cream"
               }`}
             >
-              Season {s.numeral}
+              All
+            </button>
+            {seasons.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setActiveSeason(s.id)}
+                className={`font-label text-[0.62rem] font-medium tracking-[0.14em] uppercase px-4 py-2 border cursor-pointer transition-all duration-200 ${
+                  activeSeason === s.id
+                    ? "text-bg-deep bg-amber border-amber"
+                    : "text-cream-dim bg-transparent border-border hover:border-amber-dim hover:text-cream"
+                }`}
+              >
+                Season {s.numeral}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Tag filter */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <span className="font-label text-[0.58rem] tracking-[0.14em] uppercase text-cream-dim w-10 shrink-0">
+            Type
+          </span>
+          {tagFilters.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => setActiveTag(tag)}
+              className={`font-label text-[0.62rem] font-medium tracking-[0.14em] uppercase px-4 py-2 border cursor-pointer transition-all duration-200 ${
+                activeTag === tag
+                  ? "text-bg-deep bg-amber border-amber"
+                  : "text-cream-dim bg-transparent border-border hover:border-amber-dim hover:text-cream"
+              }`}
+            >
+              {tag}
             </button>
           ))}
         </div>
-      )}
-
-      {/* Tag filter bar */}
-      <div className="flex gap-3 flex-wrap mb-10">
-        {tagFilters.map((tag) => (
-          <button
-            key={tag}
-            onClick={() => setActiveTag(tag)}
-            className={`font-label text-[0.62rem] font-medium tracking-[0.14em] uppercase px-4 py-2 border cursor-pointer transition-all duration-200 ${
-              activeTag === tag
-                ? "text-bg-deep bg-amber border-amber"
-                : "text-cream-dim bg-transparent border-border hover:border-amber-dim hover:text-cream"
-            }`}
-          >
-            {tag}
-          </button>
-        ))}
       </div>
 
       {/* Articles grid */}
@@ -128,7 +156,6 @@ export function FieldNotesGrid({
               href={`/field-notes/${article.slug}`}
               className="bg-bg-surface flex flex-col transition-colors duration-200 no-underline text-inherit hover:bg-bg-raised"
             >
-              {/* Featured image */}
               {article.image_url && (
                 <div className="h-40 overflow-hidden">
                   <img
