@@ -3,22 +3,41 @@
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { uploadArchiveFile } from "@/lib/supabase/uploadArchiveFile";
+import type { ArchiveType } from "@/types/database";
 
-async function resolveFilePath(formData: FormData): Promise<string> {
+function mimeToArchiveType(mimeType: string): ArchiveType {
+  if (mimeType === "application/pdf") return "pdf";
+  if (mimeType.startsWith("image/")) return "image";
+  if (mimeType.startsWith("audio/")) return "audio";
+  // text/plain, text/markdown, and similar text formats
+  if (mimeType.startsWith("text/")) return "transcript";
+  throw new Error(`Unsupported file type: ${mimeType}`);
+}
+
+type Resolved = { file_path: string; type: ArchiveType };
+
+async function resolveFileAndType(formData: FormData): Promise<Resolved> {
   const file = formData.get("archive_file") as File | null;
-  if (file && file.size > 0) return uploadArchiveFile(file);
-  const existing = (formData.get("file_path") as string) || "";
-  if (!existing) throw new Error("A file is required");
-  return existing;
+  if (file && file.size > 0) {
+    return {
+      file_path: await uploadArchiveFile(file),
+      type: mimeToArchiveType(file.type),
+    };
+  }
+  const file_path = (formData.get("file_path") as string) || "";
+  const type = (formData.get("type") as ArchiveType) || null;
+  if (!file_path || !type) throw new Error("A file is required");
+  return { file_path, type };
 }
 
 export async function createArchiveItem(formData: FormData) {
   const supabase = createAdminClient();
+  const { file_path, type } = await resolveFileAndType(formData);
   const { error } = await supabase.from("archive_items").insert({
     title: formData.get("title") as string,
     description: (formData.get("description") as string) || null,
-    type: formData.get("type") as string,
-    file_path: await resolveFilePath(formData),
+    type,
+    file_path,
     visibility: formData.get("visibility") as string,
     episode_id: (formData.get("episode_id") as string) || null,
     season_id: (formData.get("season_id") as string) || null,
@@ -31,13 +50,14 @@ export async function createArchiveItem(formData: FormData) {
 export async function updateArchiveItem(formData: FormData) {
   const supabase = createAdminClient();
   const id = formData.get("id") as string;
+  const { file_path, type } = await resolveFileAndType(formData);
   const { error } = await supabase
     .from("archive_items")
     .update({
       title: formData.get("title") as string,
       description: (formData.get("description") as string) || null,
-      type: formData.get("type") as string,
-      file_path: await resolveFilePath(formData),
+      type,
+      file_path,
       visibility: formData.get("visibility") as string,
       episode_id: (formData.get("episode_id") as string) || null,
       season_id: (formData.get("season_id") as string) || null,

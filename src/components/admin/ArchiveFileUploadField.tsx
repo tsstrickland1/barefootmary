@@ -33,7 +33,7 @@ export function ArchiveFileUploadField({ currentPath }: ArchiveFileUploadFieldPr
       <input
         type="file"
         name="archive_file"
-        accept=".pdf,image/*,audio/*,.txt,.md"
+        accept="application/pdf,image/*,audio/*,text/*"
         className="form-input"
         onChange={(e) => {
           const file = e.target.files?.[0];
@@ -41,7 +41,7 @@ export function ArchiveFileUploadField({ currentPath }: ArchiveFileUploadFieldPr
         }}
       />
       <span className="text-[0.75rem] text-cream-dim font-body">
-        PDF, image, audio, or transcript
+        Type detected automatically from the file
       </span>
     </div>
   );

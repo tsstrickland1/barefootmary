@@ -58,36 +58,22 @@ export default async function EditArchiveItemPage({
           />
         </AdminFormField>
 
-        <div className="grid grid-cols-2 gap-6">
-          <AdminFormField label="Type" name="type">
-            <select
-              id="type"
-              name="type"
-              required
-              defaultValue={item.type}
-              className="form-input"
-            >
-              <option value="pdf">PDF</option>
-              <option value="image">Image</option>
-              <option value="audio">Audio</option>
-              <option value="transcript">Transcript</option>
-            </select>
-          </AdminFormField>
+        {/* type is derived from the uploaded file; preserved here when no new file is chosen */}
+        <input type="hidden" name="type" value={item.type} />
 
-          <AdminFormField label="Visibility" name="visibility">
-            <select
-              id="visibility"
-              name="visibility"
-              required
-              defaultValue={item.visibility}
-              className="form-input"
-            >
-              <option value="public">Public</option>
-              <option value="subscriber">Subscriber</option>
-              <option value="patron">Patron</option>
-            </select>
-          </AdminFormField>
-        </div>
+        <AdminFormField label="Visibility" name="visibility">
+          <select
+            id="visibility"
+            name="visibility"
+            required
+            defaultValue={item.visibility}
+            className="form-input"
+          >
+            <option value="public">Public</option>
+            <option value="subscriber">Subscriber</option>
+            <option value="patron">Patron</option>
+          </select>
+        </AdminFormField>
 
         <AdminFormField label="File" name="archive_file">
           <ArchiveFileUploadField currentPath={item.file_path} />

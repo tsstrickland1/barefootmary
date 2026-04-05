@@ -33,24 +33,13 @@ export default async function NewArchiveItemPage() {
           <textarea id="description" name="description" rows={3} className="form-input" />
         </AdminFormField>
 
-        <div className="grid grid-cols-2 gap-6">
-          <AdminFormField label="Type" name="type">
-            <select id="type" name="type" required defaultValue="pdf" className="form-input">
-              <option value="pdf">PDF</option>
-              <option value="image">Image</option>
-              <option value="audio">Audio</option>
-              <option value="transcript">Transcript</option>
-            </select>
-          </AdminFormField>
-
-          <AdminFormField label="Visibility" name="visibility">
-            <select id="visibility" name="visibility" required defaultValue="subscriber" className="form-input">
-              <option value="public">Public</option>
-              <option value="subscriber">Subscriber</option>
-              <option value="patron">Patron</option>
-            </select>
-          </AdminFormField>
-        </div>
+        <AdminFormField label="Visibility" name="visibility">
+          <select id="visibility" name="visibility" required defaultValue="subscriber" className="form-input">
+            <option value="public">Public</option>
+            <option value="subscriber">Subscriber</option>
+            <option value="patron">Patron</option>
+          </select>
+        </AdminFormField>
 
         <AdminFormField label="File" name="archive_file">
           <ArchiveFileUploadField />
