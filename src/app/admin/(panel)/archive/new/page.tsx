@@ -5,7 +5,14 @@ import type { Season, Episode, Article } from "@/types/database";
 
 export const metadata = { title: "Admin — New Archive Item" };
 
-export default async function NewArchiveItemPage() {
+export default async function NewArchiveItemPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ episode_id?: string; article_id?: string }>;
+}) {
+  const { episode_id: preselectedEpisodeId, article_id: preselectedArticleId } =
+    await searchParams;
+
   const supabase = createAdminClient();
   const [{ data: seasons }, { data: episodes }, { data: articles }] = await Promise.all([
     supabase.from("seasons").select("id, title").order("number"),
@@ -65,7 +72,12 @@ export default async function NewArchiveItemPage() {
         </AdminFormField>
 
         <AdminFormField label="Related Episode" name="episode_id">
-          <select id="episode_id" name="episode_id" className="form-input">
+          <select
+            id="episode_id"
+            name="episode_id"
+            defaultValue={preselectedEpisodeId ?? ""}
+            className="form-input"
+          >
             <option value="">None</option>
             {episodeList.map((e) => (
               <option key={e.id} value={e.id}>{e.title}</option>
@@ -74,7 +86,12 @@ export default async function NewArchiveItemPage() {
         </AdminFormField>
 
         <AdminFormField label="Related Field Note" name="article_id" hint="Associate this archive item with a field note">
-          <select id="article_id" name="article_id" className="form-input">
+          <select
+            id="article_id"
+            name="article_id"
+            defaultValue={preselectedArticleId ?? ""}
+            className="form-input"
+          >
             <option value="">None</option>
             {articleList.map((a) => (
               <option key={a.id} value={a.id}>{a.title}</option>

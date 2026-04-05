@@ -31,81 +31,115 @@ export function ArticleBodyEditor({
     }
   }, [editor]);
 
+  const toolbarButtons = editor
+    ? [
+        {
+          label: "B",
+          action: () => editor.chain().focus().toggleBold().run(),
+          active: editor.isActive("bold"),
+          title: "Bold",
+        },
+        {
+          label: "I",
+          action: () => editor.chain().focus().toggleItalic().run(),
+          active: editor.isActive("italic"),
+          title: "Italic",
+        },
+        {
+          label: "S",
+          action: () => editor.chain().focus().toggleStrike().run(),
+          active: editor.isActive("strike"),
+          title: "Strikethrough",
+          strikeLabel: true,
+        },
+        {
+          label: "H2",
+          action: () =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run(),
+          active: editor.isActive("heading", { level: 2 }),
+          title: "Heading 2",
+        },
+        {
+          label: "H3",
+          action: () =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run(),
+          active: editor.isActive("heading", { level: 3 }),
+          title: "Heading 3",
+        },
+        {
+          label: "UL",
+          action: () => editor.chain().focus().toggleBulletList().run(),
+          active: editor.isActive("bulletList"),
+          title: "Bullet List",
+        },
+        {
+          label: "OL",
+          action: () => editor.chain().focus().toggleOrderedList().run(),
+          active: editor.isActive("orderedList"),
+          title: "Ordered List",
+        },
+        {
+          label: "❝",
+          action: () => editor.chain().focus().toggleBlockquote().run(),
+          active: editor.isActive("blockquote"),
+          title: "Blockquote",
+        },
+        {
+          label: "</>",
+          action: () => editor.chain().focus().toggleCode().run(),
+          active: editor.isActive("code"),
+          title: "Inline Code",
+        },
+        {
+          label: "—",
+          action: () => editor.chain().focus().setHorizontalRule().run(),
+          active: false,
+          title: "Horizontal Rule",
+        },
+      ]
+    : [];
+
   return (
     <div className="flex flex-col gap-2">
       <div className="border border-border bg-[rgba(232,223,200,0.04)] focus-within:border-[rgba(196,154,60,0.4)] transition-colors">
         {editor && (
           <div className="flex flex-wrap gap-1 px-3 py-2 border-b border-border">
-            {[
-              {
-                label: "B",
-                action: () => editor.chain().focus().toggleBold().run(),
-                active: editor.isActive("bold"),
-                title: "Bold",
-              },
-              {
-                label: "I",
-                action: () => editor.chain().focus().toggleItalic().run(),
-                active: editor.isActive("italic"),
-                title: "Italic",
-              },
-              {
-                label: "H2",
-                action: () =>
-                  editor.chain().focus().toggleHeading({ level: 2 }).run(),
-                active: editor.isActive("heading", { level: 2 }),
-                title: "Heading 2",
-              },
-              {
-                label: "H3",
-                action: () =>
-                  editor.chain().focus().toggleHeading({ level: 3 }).run(),
-                active: editor.isActive("heading", { level: 3 }),
-                title: "Heading 3",
-              },
-              {
-                label: "UL",
-                action: () =>
-                  editor.chain().focus().toggleBulletList().run(),
-                active: editor.isActive("bulletList"),
-                title: "Bullet List",
-              },
-              {
-                label: "OL",
-                action: () =>
-                  editor.chain().focus().toggleOrderedList().run(),
-                active: editor.isActive("orderedList"),
-                title: "Ordered List",
-              },
-              {
-                label: '❝',
-                action: () =>
-                  editor.chain().focus().toggleBlockquote().run(),
-                active: editor.isActive("blockquote"),
-                title: "Blockquote",
-              },
-              {
-                label: "—",
-                action: () =>
-                  editor.chain().focus().setHorizontalRule().run(),
-                active: false,
-                title: "Horizontal Rule",
-              },
-            ].map((btn) => (
+            {toolbarButtons.map((btn) => (
               <button
-                key={btn.label}
+                key={btn.title}
                 type="button"
                 title={btn.title}
                 onClick={btn.action}
-                className={`px-2.5 py-1 font-label text-[0.65rem] tracking-[0.1em] uppercase transition-colors ${
+                className={`px-2.5 py-1 font-label text-[0.75rem] tracking-[0.1em] uppercase transition-colors ${
                   btn.active
                     ? "bg-amber text-bg-deep"
                     : "text-cream-dim hover:text-cream"
-                }`}
+                } ${"strikeLabel" in btn && btn.strikeLabel ? "line-through" : ""}`}
               >
                 {btn.label}
               </button>
             ))}
+
+            <span className="w-px bg-border mx-1 self-stretch" />
+
+            <button
+              type="button"
+              title="Undo"
+              onClick={() => editor.chain().focus().undo().run()}
+              disabled={!editor.can().undo()}
+              className="px-2.5 py-1 font-label text-[0.75rem] tracking-[0.1em] uppercase transition-colors text-cream-dim hover:text-cream disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              ↩
+            </button>
+            <button
+              type="button"
+              title="Redo"
+              onClick={() => editor.chain().focus().redo().run()}
+              disabled={!editor.can().redo()}
+              className="px-2.5 py-1 font-label text-[0.75rem] tracking-[0.1em] uppercase transition-colors text-cream-dim hover:text-cream disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              ↪
+            </button>
           </div>
         )}
         <EditorContent

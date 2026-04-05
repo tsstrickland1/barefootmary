@@ -15,7 +15,7 @@ export function AdminFormField({
     <div className="flex flex-col gap-1.5">
       <label
         htmlFor={name}
-        className="font-label text-[0.65rem] tracking-[0.18em] uppercase text-cream-dim"
+        className="font-label text-[0.75rem] tracking-[0.18em] uppercase text-cream-dim"
       >
         {label}
       </label>
