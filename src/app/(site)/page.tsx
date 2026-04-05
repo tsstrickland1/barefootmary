@@ -2,13 +2,46 @@ import Link from "next/link";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { EpisodeCard } from "@/components/episodes/EpisodeCard";
 import { SubscribeButton } from "@/components/subscribe/SubscribeButton";
-import {
-  sampleEpisodes,
-  sampleArticles,
-  sampleArchiveItems,
-} from "@/lib/sample-data";
+import { sampleArticles, sampleArchiveItems } from "@/lib/sample-data";
+import { createClient } from "@/lib/supabase/server";
+import type { Episode, Season } from "@/types/database";
 
-export default function HomePage() {
+const ordinalWords = ["One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten"];
+
+function numberToWord(n: number): string {
+  return ordinalWords[n - 1] ?? String(n);
+}
+
+export default async function HomePage() {
+  const supabase = await createClient();
+
+  const { data: currentSeason } = await supabase
+    .from("seasons")
+    .select("*")
+    .eq("status", "airing")
+    .order("number", { ascending: false })
+    .limit(1)
+    .maybeSingle() as { data: Season | null };
+
+  const { data: dbEpisodes } = currentSeason
+    ? await supabase
+        .from("episodes")
+        .select("*")
+        .eq("season_id", currentSeason.id)
+        .order("number", { ascending: true })
+    : { data: null };
+
+  const episodes = (dbEpisodes as Episode[] | null ?? []).map((ep) => ({
+    number: ep.number,
+    title: ep.title,
+    description: ep.description,
+    duration: ep.duration,
+    visibility: ep.visibility,
+    slug: ep.slug,
+    seasonSlug: currentSeason!.slug,
+    image_url: ep.image_url,
+  }));
+
   const featured = sampleArticles.find((a) => a.featured);
   const sidebar = sampleArticles.filter((a) => !a.featured);
 
@@ -66,78 +99,68 @@ export default function HomePage() {
       </header>
 
       {/* ── Current Season ── */}
-      <section className="px-12 py-20 border-b border-border max-md:px-6 max-md:py-12">
-        <SectionHeader
-          label="Now Airing"
-          title="Current Season"
-          linkText="All Seasons →"
-          linkHref="/episodes"
-        />
+      {currentSeason && (
+        <section className="px-12 py-20 border-b border-border max-md:px-6 max-md:py-12">
+          <SectionHeader
+            label="Now Airing"
+            title="Current Season"
+            linkText="All Seasons →"
+            linkHref="/episodes"
+          />
 
-        <div className="bg-bg-surface border border-border p-12 grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative overflow-hidden max-md:p-6">
-          <span className="absolute right-[-0.08em] top-[-0.2em] font-display text-[20rem] font-light text-[rgba(196,154,60,0.035)] leading-none pointer-events-none select-none">
-            I
-          </span>
+          <div className="bg-bg-surface border border-border p-12 grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative overflow-hidden max-md:p-6">
+            <span className="absolute right-[-0.08em] top-[-0.2em] font-display text-[20rem] font-light text-[rgba(196,154,60,0.035)] leading-none pointer-events-none select-none">
+              {currentSeason.numeral}
+            </span>
 
-          <div>
-            <div className="font-label text-[0.65rem] font-semibold tracking-[0.22em] uppercase text-teal-light mb-3">
-              Season One
+            <div>
+              <div className="font-label text-[0.65rem] font-semibold tracking-[0.22em] uppercase text-teal-light mb-3">
+                Season {numberToWord(currentSeason.number)}
+              </div>
+              <div className="font-display text-[3.5rem] font-light text-cream leading-none mb-3 max-md:text-[2.5rem]">
+                {currentSeason.title}
+              </div>
+              <div className="font-display text-[1.1rem] font-light italic text-teal-light mb-6">
+                {currentSeason.subtitle}
+              </div>
+              {currentSeason.description && (
+                <p className="text-[0.88rem] text-cream-dim leading-[1.85] font-body max-w-[460px]">
+                  {currentSeason.description}
+                </p>
+              )}
             </div>
-            <div className="font-display text-[3.5rem] font-light text-cream leading-none mb-3 max-md:text-[2.5rem]">
-              Tunnel Vision
-            </div>
-            <div className="font-display text-[1.1rem] font-light italic text-teal-light mb-6">
-              A descent through Pensacola&apos;s hidden underground
-            </div>
-            <p className="text-[0.88rem] text-cream-dim leading-[1.85] font-body max-w-[460px]">
-              Stories of secret passageways surface again and again in local
-              memory—beneath forts, waterfront homes, and civic buildings.
-              Tunnel Vision follows these legends site by site, asking not only
-              whether particular tunnels ever existed as claimed, but why the
-              idea of hidden passages has proven so durable across generations
-              and what work they do for the people who keep telling them.
-            </p>
-          </div>
 
-          <div className="flex flex-col">
-            {[
-              { num: "9", label: "Episodes in the descent" },
-              { num: "7", label: "Sites investigated" },
-              { num: "~42", label: "Minutes per episode" },
-            ].map((stat, i, arr) => (
-              <div
-                key={stat.label}
-                className={`flex items-baseline gap-5 py-5 ${
-                  i < arr.length - 1 ? "border-b border-border" : ""
-                }`}
-              >
+            <div className="flex flex-col">
+              <div className="flex items-baseline gap-5 py-5">
                 <div className="font-display text-[3rem] font-light text-amber leading-none min-w-[72px]">
-                  {stat.num}
+                  {episodes.length}
                 </div>
                 <div className="font-label text-[0.78rem] tracking-[0.1em] uppercase text-cream-dim">
-                  {stat.label}
+                  {episodes.length === 1 ? "Episode" : "Episodes"}
                 </div>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── Episodes ── */}
-      <section className="px-12 py-20 border-b border-border max-md:px-6 max-md:py-12">
-        <SectionHeader
-          label="Season One · Tunnel Vision"
-          title="Episodes"
-          linkText="Full Archive →"
-          linkHref="/episodes/season-1"
-        />
+      {currentSeason && episodes.length > 0 && (
+        <section className="px-12 py-20 border-b border-border max-md:px-6 max-md:py-12">
+          <SectionHeader
+            label={`Season ${numberToWord(currentSeason.number)} · ${currentSeason.title}`}
+            title="Episodes"
+            linkText="Full Archive →"
+            linkHref={`/episodes/${currentSeason.slug}`}
+          />
 
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-px bg-border border border-border">
-          {sampleEpisodes.map((ep) => (
-            <EpisodeCard key={ep.slug} ep={ep} />
-          ))}
-        </div>
-      </section>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-px bg-border border border-border">
+            {episodes.map((ep) => (
+              <EpisodeCard key={ep.slug} ep={ep} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ── Field Notes ── */}
       <section className="px-12 py-20 border-b border-border max-md:px-6 max-md:py-12">
