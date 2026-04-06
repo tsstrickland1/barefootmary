@@ -51,16 +51,16 @@ export default async function HomePage() {
       <header className="min-h-[90vh] flex flex-col justify-end px-12 pb-20 relative border-b border-rule overflow-hidden max-md:px-6 max-md:min-h-[70vh] max-md:pt-16">
         <div className="absolute top-[-8%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse,rgba(196,154,60,0.05)_0%,transparent_68%)] pointer-events-none" />
 
-        {/* Season image — right-half bleed with left fade, desktop only */}
+        {/* Season image — full-bleed with heavy left gradient, desktop only */}
         {currentSeason?.image_url && (
-          <div className="absolute inset-y-0 right-0 w-1/2 overflow-hidden pointer-events-none max-md:hidden">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none max-md:hidden">
             <img
               src={currentSeason.image_url}
               alt={currentSeason.title}
               className="w-full h-full object-cover object-center"
               draggable={false}
             />
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgb(14,12,10)_0%,rgba(14,12,10,0.6)_45%,transparent_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgb(14,12,10)_0%,rgb(14,12,10)_25%,rgba(14,12,10,0.85)_50%,rgba(14,12,10,0.2)_75%,transparent_100%)]" />
           </div>
         )}
 
