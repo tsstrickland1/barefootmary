@@ -58,9 +58,6 @@ export default async function EditArchiveItemPage({
           />
         </AdminFormField>
 
-        {/* type is derived from the uploaded file; preserved here when no new file is chosen */}
-        <input type="hidden" name="type" value={item.type} />
-
         <AdminFormField label="Visibility" name="visibility">
           <select
             id="visibility"
@@ -76,7 +73,7 @@ export default async function EditArchiveItemPage({
         </AdminFormField>
 
         <AdminFormField label="File" name="archive_file">
-          <ArchiveFileUploadField currentPath={item.file_path} />
+          <ArchiveFileUploadField currentPath={item.file_path} currentType={item.type} />
         </AdminFormField>
 
         <AdminFormField label="Related Season" name="season_id">

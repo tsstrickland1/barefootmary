@@ -2,28 +2,9 @@
 
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { uploadArchiveFile } from "@/lib/supabase/uploadArchiveFile";
 import type { ArchiveType } from "@/types/database";
 
-function mimeToArchiveType(mimeType: string): ArchiveType {
-  if (mimeType === "application/pdf") return "pdf";
-  if (mimeType.startsWith("image/")) return "image";
-  if (mimeType.startsWith("audio/")) return "audio";
-  // text/plain, text/markdown, and similar text formats
-  if (mimeType.startsWith("text/")) return "transcript";
-  throw new Error(`Unsupported file type: ${mimeType}`);
-}
-
-type Resolved = { file_path: string; type: ArchiveType };
-
-async function resolveFileAndType(formData: FormData): Promise<Resolved> {
-  const file = formData.get("archive_file") as File | null;
-  if (file && file.size > 0) {
-    return {
-      file_path: await uploadArchiveFile(file),
-      type: mimeToArchiveType(file.type),
-    };
-  }
+function resolveFileAndType(formData: FormData): { file_path: string; type: ArchiveType } {
   const file_path = (formData.get("file_path") as string) || "";
   const type = (formData.get("type") as ArchiveType) || null;
   if (!file_path || !type) throw new Error("A file is required");

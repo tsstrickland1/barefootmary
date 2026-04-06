@@ -1,44 +1,66 @@
 "use client";
 
 import { useState } from "react";
+import { createSignedAudioUploadUrl } from "@/app/admin/_actions/storage";
 
 interface AudioUploadFieldProps {
-  /** Existing public URL shown as a filename hint (edit forms only). */
   currentUrl?: string | null;
 }
 
 /**
- * File-upload input for episode audio. Renders a filename hint for the current
- * audio (when editing) and a file picker for selecting a replacement.
+ * Uploads audio directly from the browser to Supabase Storage via a
+ * signed URL, bypassing Vercel's 4.5 MB serverless body limit.
  *
- * Emits two form fields:
- *   - audio_file — the selected File (empty when no new file chosen)
- *   - audio_url  — the current URL preserved as a hidden field so server
- *                  actions can retain it when no new file is uploaded
+ * The file input has no `name` so it is never submitted in the form.
+ * The hidden `audio_url` field carries the resulting public URL to the
+ * server action after the upload completes.
  */
 export function AudioUploadField({ currentUrl }: AudioUploadFieldProps) {
-  const [selectedName, setSelectedName] = useState<string | null>(null);
-  const displayName = selectedName ?? (currentUrl ? currentUrl.split("/").pop() : null);
+  const [status, setStatus] = useState<"idle" | "uploading" | "done" | "error">("idle");
+  const [audioUrl, setAudioUrl] = useState<string | null>(currentUrl ?? null);
+  const [filename, setFilename] = useState<string | null>(
+    currentUrl ? (currentUrl.split("/").pop() ?? null) : null
+  );
+
+  async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setStatus("uploading");
+    try {
+      const { signedUrl, publicUrl } = await createSignedAudioUploadUrl(file.name);
+      const res = await fetch(signedUrl, {
+        method: "PUT",
+        body: file,
+        headers: { "Content-Type": file.type },
+      });
+      if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+      setAudioUrl(publicUrl);
+      setFilename(file.name);
+      setStatus("done");
+    } catch (err) {
+      console.error("Audio upload error:", err);
+      setStatus("error");
+    }
+  }
 
   return (
     <div className="flex flex-col gap-2">
-      {displayName && (
+      {filename && (
         <p className="font-label text-[0.7rem] tracking-[0.1em] text-cream-dim truncate">
-          {displayName}
+          {status === "uploading" ? "Uploading…" : filename}
         </p>
       )}
-      {/* Preserve existing URL so the action can keep it when no new file is chosen */}
-      <input type="hidden" name="audio_url" value={currentUrl ?? ""} />
+      <input type="hidden" name="audio_url" value={audioUrl ?? ""} />
       <input
         type="file"
-        name="audio_file"
         accept="audio/*"
         className="form-input"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) setSelectedName(file.name);
-        }}
+        onChange={handleChange}
+        disabled={status === "uploading"}
       />
+      {status === "error" && (
+        <p className="text-[0.75rem] text-red-400">Upload failed. Please try again.</p>
+      )}
     </div>
   );
 }
