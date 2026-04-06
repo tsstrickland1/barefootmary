@@ -111,8 +111,6 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animRef = useRef<number>(0);
-  // Smoothed bar values persist between frames so bars decay gracefully
-  const smoothedRef = useRef<number[]>(STATIC_BARS.slice());
 
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -127,7 +125,6 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
     const onEnded = () => {
       setPlaying(false);
       cancelAnimationFrame(animRef.current);
-      smoothedRef.current = STATIC_BARS.slice();
       setBars(STATIC_BARS);
     };
     audio.addEventListener("timeupdate", onTime);
@@ -148,8 +145,10 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
     const ctx = new AudioContext();
     const source = ctx.createMediaElementSource(audio);
     const analyser = ctx.createAnalyser();
-    // Large fftSize gives more time-domain samples to work with (2048 → 2048 samples)
-    analyser.fftSize = 2048;
+    // fftSize 1024 → 512 frequency bins, ~43Hz resolution at 44.1kHz
+    analyser.fftSize = 1024;
+    // Built-in smoothing so bars animate fluidly rather than jumping each frame
+    analyser.smoothingTimeConstant = 0.8;
     source.connect(analyser);
     analyser.connect(ctx.destination);
     audioCtxRef.current = ctx;
@@ -158,29 +157,22 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
 
   function startAnimation() {
     const analyser = analyserRef.current!;
-    // Time-domain data: raw PCM amplitude values (0–255, 128 = silence)
-    const data = new Uint8Array(analyser.fftSize);
+    const data = new Uint8Array(analyser.frequencyBinCount); // 512 bins
     const BAR_COUNT = 60;
-    const chunkSize = Math.floor(data.length / BAR_COUNT);
-    const DECAY = 0.88; // bars fall off at ~12% per frame rather than snapping to zero
+    // Log-scale mapping covers ~50Hz (bin 1) to ~8kHz (bin 186).
+    // Human hearing and speech/music energy is concentrated here; bins
+    // beyond ~186 are near-silent for most content and would be flat.
+    const MIN_BIN = 1;
+    const MAX_BIN = 186;
 
     function tick() {
-      analyser.getByteTimeDomainData(data);
-
-      const next = smoothedRef.current.map((prev, i) => {
-        // RMS amplitude for this bar's chunk of samples
-        let sum = 0;
-        for (let j = 0; j < chunkSize; j++) {
-          const s = (data[i * chunkSize + j] - 128) / 128; // −1 to 1
-          sum += s * s;
-        }
-        const rms = Math.sqrt(sum / chunkSize);
-        // Hold the peak, decay if the new value is quieter
-        return Math.max(rms, prev * DECAY);
+      analyser.getByteFrequencyData(data);
+      const next = Array.from({ length: BAR_COUNT }, (_, i) => {
+        const t = i / (BAR_COUNT - 1);
+        const bin = Math.round(MIN_BIN * Math.pow(MAX_BIN / MIN_BIN, t));
+        return data[Math.min(bin, data.length - 1)] / 255;
       });
-
-      smoothedRef.current = next;
-      setBars([...next]);
+      setBars(next);
       animRef.current = requestAnimationFrame(tick);
     }
     tick();
@@ -192,7 +184,6 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
       audio.pause();
       setPlaying(false);
       cancelAnimationFrame(animRef.current);
-      smoothedRef.current = STATIC_BARS.slice();
       setBars(STATIC_BARS);
     } else {
       initAudioContext();
