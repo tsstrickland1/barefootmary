@@ -8,7 +8,6 @@ type ArchiveItem = {
   title: string;
   description: string | null;
   visibility: "public" | "subscriber" | "patron";
-  episode: string;
   file_path: string;
 };
 
@@ -182,16 +181,14 @@ function TranscriptViewer({ title }: { title: string }) {
 }
 
 export function ArchiveItemViewer({ item }: { item: ArchiveItem }) {
-  const type = item.type.toUpperCase();
-
   return (
     <div className="flex flex-col gap-0">
-      {type === "PDF" && <PdfViewer title={item.title} />}
-      {type === "IMG" && (
+      {item.type === "pdf" && <PdfViewer title={item.title} />}
+      {item.type === "image" && (
         <ImageViewer title={item.title} src={item.file_path} />
       )}
-      {type === "AUD" && <AudioViewer title={item.title} />}
-      {type === "TXT" && <TranscriptViewer title={item.title} />}
+      {item.type === "audio" && <AudioViewer title={item.title} />}
+      {item.type === "transcript" && <TranscriptViewer title={item.title} />}
     </div>
   );
 }
