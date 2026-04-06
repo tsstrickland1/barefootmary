@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { AudioUploadField } from "@/components/admin/AudioUploadField";
 import { updateEpisode } from "@/app/admin/_actions/episodes";
 import type { Season, ArchiveItem } from "@/types/database";
 
@@ -114,14 +115,8 @@ export default async function EditEpisodePage({
           />
         </AdminFormField>
 
-        <AdminFormField label="Audio URL" name="audio_url">
-          <input
-            id="audio_url"
-            name="audio_url"
-            type="url"
-            defaultValue={episode.audio_url ?? ""}
-            className="form-input"
-          />
+        <AdminFormField label="Audio" name="audio_file">
+          <AudioUploadField currentUrl={episode.audio_url} />
         </AdminFormField>
 
         <AdminFormField label="Peaks JSON URL" name="peaks_json_url" hint="Waveform data URL">
