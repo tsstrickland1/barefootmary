@@ -98,7 +98,7 @@ export function Nav() {
     <>
       <nav className="sticky top-0 z-50 grid grid-cols-[1fr_auto_1fr] gap-x-4 md:gap-x-8 items-center px-6 py-4 md:px-10 md:py-5 bg-[rgba(14,12,10,0.94)] backdrop-blur-[10px] border-b border-border">
         {/* Left: hamburger (mobile) or nav links (desktop) */}
-        <div className="flex items-center justify-start">
+        <div className="flex items-center justify-start md:justify-end">
           {/* Hamburger — mobile only */}
           <button
             onClick={() => setIsOpen(true)}
