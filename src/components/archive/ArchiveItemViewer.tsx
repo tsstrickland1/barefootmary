@@ -11,25 +11,17 @@ type ArchiveItem = {
   file_path: string;
 };
 
-function PdfViewer({ title }: { title: string }) {
+function PdfViewer({ title, src }: { title: string; src: string }) {
   return (
     <div
       className="w-full bg-bg-deep border border-border"
       onContextMenu={(e) => e.preventDefault()}
     >
-      {/* Placeholder: in production, file_path would be a signed Supabase URL */}
-      <div className="flex items-center justify-center h-[70vh] flex-col gap-4">
-        <div className="w-16 h-16 border border-amber-dim flex items-center justify-center font-label text-[0.72rem] tracking-[0.1em] text-amber uppercase">
-          PDF
-        </div>
-        <p className="font-label text-[0.7rem] tracking-[0.1em] uppercase text-cream-dim text-center max-w-[320px]">
-          {title}
-        </p>
-        <p className="font-body text-[0.8rem] italic text-cream-dim text-center max-w-[400px] leading-[1.7]">
-          Document viewer will render here. The PDF is streamed directly from
-          secure storage without a downloadable link.
-        </p>
-      </div>
+      <iframe
+        src={src}
+        title={title}
+        className="w-full h-[70vh] border-0"
+      />
     </div>
   );
 }
@@ -59,11 +51,14 @@ function ImageViewer({ title, src }: { title: string; src: string }) {
         onContextMenu={(e) => e.preventDefault()}
         title="Click to zoom"
       >
-        {/* Placeholder image — in production this is a signed Supabase URL */}
-        <div className="flex flex-col items-center gap-6 py-16">
-          <div className="w-64 h-48 border border-amber-dim flex items-center justify-center font-label text-[0.72rem] tracking-[0.1em] text-amber uppercase bg-[rgba(196,154,60,0.03)]">
-            IMG
-          </div>
+        <div className="flex flex-col items-center gap-6 py-8">
+          <img
+            src={src}
+            alt={title}
+            draggable={false}
+            className="max-w-full max-h-[60vh] object-contain"
+            onContextMenu={(e) => e.preventDefault()}
+          />
           <p className="font-label text-[0.65rem] tracking-[0.12em] uppercase text-cream-dim">
             Click to view full size
           </p>
@@ -90,10 +85,13 @@ function ImageViewer({ title, src }: { title: string; src: string }) {
             className="max-w-[90vw] max-h-[90vh] flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* In production: <img src={signedUrl} alt={title} draggable={false} className="max-w-full max-h-[90vh] object-contain" onContextMenu={(e) => e.preventDefault()} /> */}
-            <div className="w-[600px] h-[450px] border border-amber-dim flex items-center justify-center font-label text-[0.72rem] tracking-[0.1em] text-amber uppercase bg-bg-deep">
-              Full-resolution image · {title}
-            </div>
+            <img
+              src={src}
+              alt={title}
+              draggable={false}
+              className="max-w-full max-h-[90vh] object-contain"
+              onContextMenu={(e) => e.preventDefault()}
+            />
           </div>
           <p className="absolute bottom-5 left-1/2 -translate-x-1/2 font-label text-[0.6rem] tracking-[0.14em] uppercase text-cream-dim">
             Press Esc or click outside to close
@@ -104,7 +102,7 @@ function ImageViewer({ title, src }: { title: string; src: string }) {
   );
 }
 
-function AudioViewer({ title }: { title: string }) {
+function AudioViewer({ title, src }: { title: string; src: string }) {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   return (
@@ -136,7 +134,6 @@ function AudioViewer({ title }: { title: string }) {
           ))}
         </div>
 
-        {/* Audio element — in production src would be a signed Supabase URL */}
         <audio
           ref={audioRef}
           controls
@@ -145,7 +142,7 @@ function AudioViewer({ title }: { title: string }) {
           className="w-full"
           style={{ colorScheme: "dark" }}
         >
-          <source src="" type="audio/mpeg" />
+          <source src={src} type="audio/mpeg" />
           Your browser does not support the audio element.
         </audio>
 
@@ -180,14 +177,14 @@ function TranscriptViewer({ title }: { title: string }) {
   );
 }
 
-export function ArchiveItemViewer({ item }: { item: ArchiveItem }) {
+export function ArchiveItemViewer({ item, fileUrl }: { item: ArchiveItem; fileUrl: string }) {
   return (
     <div className="flex flex-col gap-0">
-      {item.type === "pdf" && <PdfViewer title={item.title} />}
+      {item.type === "pdf" && <PdfViewer title={item.title} src={fileUrl} />}
       {item.type === "image" && (
-        <ImageViewer title={item.title} src={item.file_path} />
+        <ImageViewer title={item.title} src={fileUrl} />
       )}
-      {item.type === "audio" && <AudioViewer title={item.title} />}
+      {item.type === "audio" && <AudioViewer title={item.title} src={fileUrl} />}
       {item.type === "transcript" && <TranscriptViewer title={item.title} />}
     </div>
   );
