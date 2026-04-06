@@ -23,7 +23,7 @@ export default async function NewArticlePage() {
   const seasonList = (seasons as Pick<Season, "id" | "title" | "numeral">[] ?? []);
 
   return (
-    <div className="px-10 py-10 max-w-3xl">
+    <div className="px-4 py-6 sm:px-10 sm:py-10 max-w-3xl">
       <h1 className="font-display text-[2rem] font-light text-cream leading-none mb-8">
         New Article
       </h1>

@@ -23,7 +23,7 @@ export default async function AdminSubmissionsPage() {
   const rows: Submission[] = submissions ?? [];
 
   return (
-    <div className="px-10 py-10">
+    <div className="px-4 py-6 sm:px-10 sm:py-10">
       <h1 className="font-display text-[2rem] font-light text-cream leading-none mb-8">
         Submissions
       </h1>
@@ -31,7 +31,7 @@ export default async function AdminSubmissionsPage() {
       {rows.length === 0 ? (
         <p className="text-cream-dim font-body text-sm">No submissions yet.</p>
       ) : (
-        <div className="border border-border overflow-hidden">
+        <div className="border border-border overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-bg-raised border-b border-border">

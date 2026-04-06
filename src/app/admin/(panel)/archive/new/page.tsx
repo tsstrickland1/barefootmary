@@ -26,7 +26,7 @@ export default async function NewArchiveItemPage({
   const articleList = (articles as Pick<Article, "id" | "title">[] ?? []);
 
   return (
-    <div className="px-10 py-10 max-w-2xl">
+    <div className="px-4 py-6 sm:px-10 sm:py-10 max-w-2xl">
       <h1 className="font-display text-[2rem] font-light text-cream leading-none mb-8">
         New Archive Item
       </h1>

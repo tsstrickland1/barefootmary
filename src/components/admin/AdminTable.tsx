@@ -37,7 +37,7 @@ export function AdminTable<T extends { id: string }>({
       {rows.length === 0 ? (
         <p className="text-cream-dim font-body text-sm">{emptyMessage}</p>
       ) : (
-        <div className="border border-border overflow-hidden">
+        <div className="border border-border overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-bg-raised border-b border-border">

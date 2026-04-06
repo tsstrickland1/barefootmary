@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { EpisodePlayer } from "@/components/episodes/EpisodePlayer";
 
 const ordinalWords = ["One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten"];
 
@@ -83,27 +84,24 @@ export default async function EpisodePage({
         </p>
       </div>
 
-      {/* Audio player placeholder */}
-      <div className="bg-bg-surface border border-border p-8 mb-12">
-        <div className="font-label text-[0.65rem] font-medium tracking-[0.22em] uppercase text-amber mb-4">
-          Listen
-        </div>
-        <div className="h-16 bg-bg-deep border border-border flex items-center justify-center">
-          <span className="font-label text-[0.72rem] tracking-[0.1em] text-cream-dim">
-            Audio player · Wavesurfer.js waveform will render here
-          </span>
-        </div>
-        <div className="flex gap-3 mt-4">
-          {["Apple Podcasts", "Spotify", "RSS"].map((p) => (
-            <a
-              key={p}
-              href="#"
-              className="font-label text-[0.6rem] font-medium tracking-[0.14em] uppercase text-cream-dim bg-[rgba(232,223,200,0.04)] border border-border px-3 py-1 no-underline transition-all duration-200 hover:text-cream"
-            >
-              {p}
-            </a>
-          ))}
-        </div>
+      {/* Audio player */}
+      <EpisodePlayer
+        title={episode.title}
+        audioUrl={episode.audio_url}
+        duration={episode.duration}
+      />
+
+      {/* Podcast links */}
+      <div className="flex gap-3 mb-12">
+        {["Apple Podcasts", "Spotify", "RSS"].map((p) => (
+          <a
+            key={p}
+            href="#"
+            className="font-label text-[0.6rem] font-medium tracking-[0.14em] uppercase text-cream-dim bg-[rgba(232,223,200,0.04)] border border-border px-3 py-1 no-underline transition-all duration-200 hover:text-cream"
+          >
+            {p}
+          </a>
+        ))}
       </div>
 
       {/* Show notes placeholder */}

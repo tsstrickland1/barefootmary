@@ -25,7 +25,7 @@ export default async function AdminSubscribersPage() {
   const rows: Subscriber[] = subscribers ?? [];
 
   return (
-    <div className="px-10 py-10">
+    <div className="px-4 py-6 sm:px-10 sm:py-10">
       <div className="flex items-baseline gap-4 mb-8">
         <h1 className="font-display text-[2rem] font-light text-cream leading-none">
           Subscribers
@@ -35,7 +35,7 @@ export default async function AdminSubscribersPage() {
         </span>
       </div>
 
-      <div className="flex gap-6 mb-8">
+      <div className="flex flex-wrap gap-4 mb-8">
         {(["active", "canceled", "past_due"] as const).map((s) => {
           const count = rows.filter((r) => r.status === s).length;
           return (
@@ -54,7 +54,7 @@ export default async function AdminSubscribersPage() {
       {rows.length === 0 ? (
         <p className="text-cream-dim font-body text-sm">No subscribers yet.</p>
       ) : (
-        <div className="border border-border overflow-hidden">
+        <div className="border border-border overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-bg-raised border-b border-border">
