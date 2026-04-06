@@ -19,6 +19,12 @@ async function resolveAudioUrl(formData: FormData): Promise<string | null> {
 
 export async function createEpisode(formData: FormData) {
   const supabase = createAdminClient();
+  let audio_url: string | null = null;
+  try {
+    audio_url = await resolveAudioUrl(formData);
+  } catch (e) {
+    redirect(`/admin/episodes?error=${encodeURIComponent(String(e))}`);
+  }
   const { error } = await supabase.from("episodes").insert({
     season_id: formData.get("season_id") as string,
     slug: formData.get("slug") as string,
@@ -26,7 +32,7 @@ export async function createEpisode(formData: FormData) {
     title: formData.get("title") as string,
     description: (formData.get("description") as string) || null,
     duration: (formData.get("duration") as string) || null,
-    audio_url: await resolveAudioUrl(formData),
+    audio_url,
     peaks_json_url: (formData.get("peaks_json_url") as string) || null,
     image_url: await resolveImageUrl(formData),
     visibility: formData.get("visibility") as string,
@@ -39,6 +45,12 @@ export async function createEpisode(formData: FormData) {
 export async function updateEpisode(formData: FormData) {
   const supabase = createAdminClient();
   const id = formData.get("id") as string;
+  let audio_url: string | null = null;
+  try {
+    audio_url = await resolveAudioUrl(formData);
+  } catch (e) {
+    redirect(`/admin/episodes/${id}?error=${encodeURIComponent(String(e))}`);
+  }
   const { error } = await supabase
     .from("episodes")
     .update({
@@ -48,7 +60,7 @@ export async function updateEpisode(formData: FormData) {
       title: formData.get("title") as string,
       description: (formData.get("description") as string) || null,
       duration: (formData.get("duration") as string) || null,
-      audio_url: await resolveAudioUrl(formData),
+      audio_url,
       peaks_json_url: (formData.get("peaks_json_url") as string) || null,
       image_url: await resolveImageUrl(formData),
       visibility: formData.get("visibility") as string,
