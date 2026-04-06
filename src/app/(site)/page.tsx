@@ -60,7 +60,7 @@ export default async function HomePage() {
               className="w-full h-full object-cover object-center"
               draggable={false}
             />
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(14,12,10,0.92)_0%,rgba(14,12,10,0.7)_55%,rgba(14,12,10,0.25)_80%,transparent_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(14,12,10,0.95)_0%,rgba(14,12,10,0.8)_55%,rgba(14,12,10,0.45)_80%,rgba(14,12,10,0.1)_100%)]" />
           </div>
         )}
 
