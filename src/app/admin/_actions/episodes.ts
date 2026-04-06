@@ -11,20 +11,14 @@ async function resolveImageUrl(formData: FormData): Promise<string | null> {
   return (formData.get("image_url") as string) || null;
 }
 
-async function resolveAudioUrl(formData: FormData): Promise<string | null> {
-  const file = formData.get("audio_file") as File | null;
-  if (file && file.size > 0) return uploadAudio(file);
-  return (formData.get("audio_url") as string) || null;
-}
-
 export async function createEpisode(formData: FormData) {
   const supabase = createAdminClient();
-  let audio_url: string | null = null;
-  try {
-    audio_url = await resolveAudioUrl(formData);
-  } catch (e) {
-    redirect(`/admin/episodes?error=${encodeURIComponent(String(e))}`);
-  }
+
+  const audioFile = formData.get("audio_file") as File | null;
+  const audio_url = audioFile && audioFile.size > 0
+    ? await uploadAudio(audioFile)
+    : (formData.get("audio_url") as string) || null;
+
   const { error } = await supabase.from("episodes").insert({
     season_id: formData.get("season_id") as string,
     slug: formData.get("slug") as string,
@@ -45,12 +39,12 @@ export async function createEpisode(formData: FormData) {
 export async function updateEpisode(formData: FormData) {
   const supabase = createAdminClient();
   const id = formData.get("id") as string;
-  let audio_url: string | null = null;
-  try {
-    audio_url = await resolveAudioUrl(formData);
-  } catch (e) {
-    redirect(`/admin/episodes/${id}?error=${encodeURIComponent(String(e))}`);
-  }
+
+  const audioFile = formData.get("audio_file") as File | null;
+  const audio_url = audioFile && audioFile.size > 0
+    ? await uploadAudio(audioFile)
+    : (formData.get("audio_url") as string) || null;
+
   const { error } = await supabase
     .from("episodes")
     .update({
