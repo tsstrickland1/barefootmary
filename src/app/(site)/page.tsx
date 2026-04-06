@@ -47,9 +47,29 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ── Hero ── */}
+      {/* ── Hero (with current season) ── */}
       <header className="min-h-[90vh] flex flex-col justify-end px-12 pb-20 relative border-b border-rule overflow-hidden max-md:px-6 max-md:min-h-[70vh] max-md:pt-16">
         <div className="absolute top-[-8%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse,rgba(196,154,60,0.05)_0%,transparent_68%)] pointer-events-none" />
+
+        {/* Season image — right-half bleed with left fade, desktop only */}
+        {currentSeason?.image_url && (
+          <div className="absolute inset-y-0 right-0 w-1/2 overflow-hidden pointer-events-none max-md:hidden">
+            <img
+              src={currentSeason.image_url}
+              alt={currentSeason.title}
+              className="w-full h-full object-cover object-center"
+              draggable={false}
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgb(14,12,10)_0%,rgba(14,12,10,0.6)_45%,transparent_100%)]" />
+          </div>
+        )}
+
+        {/* Season numeral watermark */}
+        {currentSeason && (
+          <span className="absolute right-[-0.08em] top-[-0.2em] font-display text-[20rem] font-light text-[rgba(196,154,60,0.035)] leading-none pointer-events-none select-none max-md:text-[10rem]">
+            {currentSeason.numeral}
+          </span>
+        )}
 
         <div className="font-label text-[0.68rem] font-medium tracking-[0.28em] uppercase text-amber mb-5">
           Investigative History · Pensacola &amp; the Gulf Coast
@@ -61,28 +81,47 @@ export default async function HomePage() {
           <em className="italic text-amber">Mary</em>
         </h1>
 
-        <div className="flex items-center gap-10 flex-wrap">
-          <p className="font-body text-[0.95rem] font-light italic text-cream-dim max-w-[380px] leading-[1.6]">
+        {currentSeason ? (
+          <div className="mb-8 max-w-[640px]">
+            <div className="w-12 h-px bg-amber-dim mb-6" />
+            <div className="flex items-baseline gap-5 flex-wrap">
+              <div className="font-label text-[0.65rem] font-semibold tracking-[0.22em] uppercase text-teal-light shrink-0">
+                Season {numberToWord(currentSeason.number)}
+              </div>
+              <div className="font-display text-[2rem] font-light text-cream leading-none max-md:text-[1.6rem]">
+                {currentSeason.title}
+              </div>
+            </div>
+            <div className="font-display text-[1rem] font-light italic text-teal-light mt-2">
+              {currentSeason.subtitle}
+            </div>
+          </div>
+        ) : (
+          <p className="font-body text-[0.95rem] font-light italic text-cream-dim max-w-[380px] leading-[1.6] mb-8">
             Half-remembered events, overlooked histories, and the persistent
             local legends that shape how communities understand themselves.
           </p>
+        )}
 
-          <Link
-            href="/episodes/season-1/door-to-the-seven-gates"
-            className="flex items-center gap-5 no-underline px-7 py-[0.9rem] border border-amber-dim text-cream transition-all duration-[250ms] shrink-0 hover:bg-cream-faint hover:border-amber"
-          >
-            <div className="w-[38px] h-[38px] border-[1.5px] border-amber rounded-full flex items-center justify-center shrink-0">
-              <span className="w-0 h-0 border-solid border-y-[5px] border-y-transparent border-l-[9px] border-l-amber ml-[2px]" />
-            </div>
-            <div className="flex flex-col gap-[2px]">
-              <span className="font-label text-[0.6rem] tracking-[0.22em] uppercase text-amber font-medium">
-                Latest Episode
-              </span>
-              <span className="font-display text-[1.05rem] font-normal text-cream leading-[1.2]">
-                Door to the Seven Gates
-              </span>
-            </div>
-          </Link>
+        <div className="flex items-center gap-10 flex-wrap">
+          {currentSeason && episodes.length > 0 && (
+            <Link
+              href={`/episodes/${currentSeason.slug}/${episodes[0].slug}`}
+              className="flex items-center gap-5 no-underline px-7 py-[0.9rem] border border-amber-dim text-cream transition-all duration-[250ms] shrink-0 hover:bg-cream-faint hover:border-amber"
+            >
+              <div className="w-[38px] h-[38px] border-[1.5px] border-amber rounded-full flex items-center justify-center shrink-0">
+                <span className="w-0 h-0 border-solid border-y-[5px] border-y-transparent border-l-[9px] border-l-amber ml-[2px]" />
+              </div>
+              <div className="flex flex-col gap-[2px]">
+                <span className="font-label text-[0.6rem] tracking-[0.22em] uppercase text-amber font-medium">
+                  Latest Episode
+                </span>
+                <span className="font-display text-[1.05rem] font-normal text-cream leading-[1.2]">
+                  {episodes[0].title}
+                </span>
+              </div>
+            </Link>
+          )}
 
           <div className="flex gap-3 flex-wrap mt-1">
             {["Apple Podcasts", "Spotify", "RSS Feed"].map((platform) => (
@@ -97,60 +136,6 @@ export default async function HomePage() {
           </div>
         </div>
       </header>
-
-      {/* ── Current Season ── */}
-      {currentSeason && (
-        <section className="px-12 py-20 border-b border-border max-md:px-6 max-md:py-12">
-          <SectionHeader
-            label="Now Airing"
-            title="Current Season"
-            linkText="All Seasons →"
-            linkHref="/episodes"
-          />
-
-          <div className={`bg-bg-surface border border-border p-12 grid grid-cols-1 gap-12 items-stretch relative overflow-hidden max-md:p-6${currentSeason.image_url ? " md:grid-cols-2" : ""}`}>
-            <span className="absolute right-[-0.08em] top-[-0.2em] font-display text-[20rem] font-light text-[rgba(196,154,60,0.035)] leading-none pointer-events-none select-none">
-              {currentSeason.numeral}
-            </span>
-
-            {currentSeason.image_url && (
-              <div className="order-first md:order-last -m-12 max-md:-mx-6 max-md:-mt-6 md:my-[-3rem] md:mr-[-3rem] overflow-hidden min-h-[14rem] md:min-h-0">
-                <img
-                  src={currentSeason.image_url}
-                  alt={currentSeason.title}
-                  className="w-full h-full object-cover"
-                  draggable={false}
-                />
-              </div>
-            )}
-
-            <div>
-              <div className="font-label text-[0.65rem] font-semibold tracking-[0.22em] uppercase text-teal-light mb-3">
-                Season {numberToWord(currentSeason.number)}
-              </div>
-              <div className="font-display text-[3.5rem] font-light text-cream leading-none mb-3 max-md:text-[2.5rem]">
-                {currentSeason.title}
-              </div>
-              <div className="font-display text-[1.1rem] font-light italic text-teal-light mb-6">
-                {currentSeason.subtitle}
-              </div>
-              {currentSeason.description && (
-                <p className="text-[0.88rem] text-cream-dim leading-[1.85] font-body max-w-[460px] mb-6">
-                  {currentSeason.description}
-                </p>
-              )}
-              <div className="flex items-baseline gap-5 pt-2">
-                <div className="font-display text-[3rem] font-light text-amber leading-none min-w-[72px]">
-                  {episodes.length}
-                </div>
-                <div className="font-label text-[0.78rem] tracking-[0.1em] uppercase text-cream-dim">
-                  {episodes.length === 1 ? "Episode" : "Episodes"}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ── Episodes ── */}
       {currentSeason && episodes.length > 0 && (
@@ -269,26 +254,6 @@ export default async function HomePage() {
               Subscriber access unlocks full documents and audio; all users can
               browse the catalog.
             </p>
-            <div className="grid grid-cols-2 gap-4 mt-6">
-              {[
-                { icon: "PDF", label: "Documents & Plans" },
-                { icon: "IMG", label: "Photographs & Maps" },
-                { icon: "AUD", label: "Oral History Audio" },
-                { icon: "TXT", label: "Transcripts & Notes" },
-              ].map((type) => (
-                <div
-                  key={type.icon}
-                  className="bg-bg-surface border border-border p-4 flex items-center gap-4"
-                >
-                  <div className="w-10 h-10 border border-border flex items-center justify-center shrink-0 font-label text-[0.58rem] tracking-[0.1em] text-amber uppercase">
-                    {type.icon}
-                  </div>
-                  <div className="font-label text-[0.72rem] tracking-[0.1em] uppercase text-cream-dim">
-                    {type.label}
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
 
