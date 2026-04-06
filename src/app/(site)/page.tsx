@@ -60,7 +60,7 @@ export default async function HomePage() {
               className="w-full h-full object-cover object-center"
               draggable={false}
             />
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(14,12,10,0.82)_0%,rgba(14,12,10,0.55)_40%,rgba(14,12,10,0.15)_70%,transparent_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(14,12,10,0.92)_0%,rgba(14,12,10,0.7)_45%,rgba(14,12,10,0.25)_70%,transparent_100%)]" />
           </div>
         )}
 
@@ -71,36 +71,40 @@ export default async function HomePage() {
           </span>
         )}
 
-        <div className="font-label text-[0.68rem] font-medium tracking-[0.28em] uppercase text-amber mb-5">
-          Investigative History · Pensacola &amp; the Gulf Coast
-        </div>
-
-        <h1 className="font-display text-[clamp(4rem,9.5vw,9rem)] font-light leading-[0.88] text-cream tracking-[-0.015em] mb-9 max-w-[1000px] max-md:text-[3.5rem]">
-          Barefoot
-          <br />
-          <em className="italic text-amber">Mary</em>
-        </h1>
-
         {currentSeason ? (
-          <div className="mb-8 max-w-[640px]">
-            <div className="w-12 h-px bg-amber-dim mb-6" />
-            <div className="flex items-baseline gap-5 flex-wrap">
-              <div className="font-label text-[0.65rem] font-semibold tracking-[0.22em] uppercase text-teal-light shrink-0">
-                Season {numberToWord(currentSeason.number)}
-              </div>
-              <div className="font-display text-[2rem] font-light text-cream leading-none max-md:text-[1.6rem]">
-                {currentSeason.title}
-              </div>
+          <>
+            <div className="font-label text-[0.68rem] font-medium tracking-[0.28em] uppercase text-amber mb-5">
+              Now Airing · Season {numberToWord(currentSeason.number)}
             </div>
-            <div className="font-display text-[1rem] font-light italic text-teal-light mt-2">
-              {currentSeason.subtitle}
-            </div>
-          </div>
+            <h1 className="font-display text-[clamp(3rem,7vw,7rem)] font-light leading-[0.92] text-cream tracking-[-0.015em] mb-5 max-w-[700px] max-md:text-[2.5rem]">
+              {currentSeason.title}
+            </h1>
+            {currentSeason.subtitle && (
+              <div className="font-display text-[1.1rem] font-light italic text-teal-light mb-4 max-w-[560px]">
+                {currentSeason.subtitle}
+              </div>
+            )}
+            {currentSeason.description && (
+              <p className="font-body text-[0.88rem] font-light text-cream-dim max-w-[460px] leading-[1.75] mb-8">
+                {currentSeason.description}
+              </p>
+            )}
+          </>
         ) : (
-          <p className="font-body text-[0.95rem] font-light italic text-cream-dim max-w-[380px] leading-[1.6] mb-8">
-            Half-remembered events, overlooked histories, and the persistent
-            local legends that shape how communities understand themselves.
-          </p>
+          <>
+            <div className="font-label text-[0.68rem] font-medium tracking-[0.28em] uppercase text-amber mb-5">
+              Investigative History · Pensacola &amp; the Gulf Coast
+            </div>
+            <h1 className="font-display text-[clamp(4rem,9.5vw,9rem)] font-light leading-[0.88] text-cream tracking-[-0.015em] mb-9 max-w-[1000px] max-md:text-[3.5rem]">
+              Barefoot
+              <br />
+              <em className="italic text-amber">Mary</em>
+            </h1>
+            <p className="font-body text-[0.95rem] font-light italic text-cream-dim max-w-[380px] leading-[1.6] mb-8">
+              Half-remembered events, overlooked histories, and the persistent
+              local legends that shape how communities understand themselves.
+            </p>
+          </>
         )}
 
         <div className="flex items-center gap-10 flex-wrap">
