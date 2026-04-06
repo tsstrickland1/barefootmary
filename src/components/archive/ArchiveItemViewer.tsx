@@ -177,9 +177,9 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
       setFreqBars(STATIC_BARS);
     } else {
       initAudioContext();
-      if (audioCtxRef.current?.state === "suspended") {
-        await audioCtxRef.current.resume();
-      }
+      // Always resume — Safari and some Chrome versions start AudioContext
+      // in "suspended" even during a user gesture.
+      await audioCtxRef.current!.resume();
       await audio.play();
       setPlaying(true);
       startAnimation();
@@ -206,8 +206,8 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
       className="w-full bg-bg-deep border border-border p-10"
       onContextMenu={(e) => e.preventDefault()}
     >
-      {/* Hidden audio element — playback only, no native controls */}
-      <audio ref={audioRef} src={src} preload="metadata" />
+      {/* crossOrigin is required for createMediaElementSource on a cross-origin URL */}
+      <audio ref={audioRef} src={src} preload="metadata" crossOrigin="anonymous" />
 
       <div className="max-w-xl mx-auto flex flex-col gap-6">
         {/* Header */}
