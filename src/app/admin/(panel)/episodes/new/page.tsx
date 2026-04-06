@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminFormField } from "@/components/admin/AdminFormField";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { AudioUploadField } from "@/components/admin/AudioUploadField";
 import { createEpisode } from "@/app/admin/_actions/episodes";
 import type { Season } from "@/types/database";
 
@@ -61,8 +62,8 @@ export default async function NewEpisodePage() {
           <textarea id="description" name="description" rows={4} className="form-input" />
         </AdminFormField>
 
-        <AdminFormField label="Audio URL" name="audio_url">
-          <input id="audio_url" name="audio_url" type="url" className="form-input" />
+        <AdminFormField label="Audio" name="audio_file">
+          <AudioUploadField />
         </AdminFormField>
 
         <AdminFormField label="Peaks JSON URL" name="peaks_json_url" hint="Waveform data URL">

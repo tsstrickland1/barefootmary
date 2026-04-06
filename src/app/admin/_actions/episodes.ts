@@ -3,11 +3,18 @@
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { uploadImage } from "@/lib/supabase/uploadImage";
+import { uploadAudio } from "@/lib/supabase/uploadAudio";
 
 async function resolveImageUrl(formData: FormData): Promise<string | null> {
   const file = formData.get("image_file") as File | null;
   if (file && file.size > 0) return uploadImage(file, "episodes");
   return (formData.get("image_url") as string) || null;
+}
+
+async function resolveAudioUrl(formData: FormData): Promise<string | null> {
+  const file = formData.get("audio_file") as File | null;
+  if (file && file.size > 0) return uploadAudio(file);
+  return (formData.get("audio_url") as string) || null;
 }
 
 export async function createEpisode(formData: FormData) {
@@ -19,7 +26,7 @@ export async function createEpisode(formData: FormData) {
     title: formData.get("title") as string,
     description: (formData.get("description") as string) || null,
     duration: (formData.get("duration") as string) || null,
-    audio_url: (formData.get("audio_url") as string) || null,
+    audio_url: await resolveAudioUrl(formData),
     peaks_json_url: (formData.get("peaks_json_url") as string) || null,
     image_url: await resolveImageUrl(formData),
     visibility: formData.get("visibility") as string,
@@ -41,7 +48,7 @@ export async function updateEpisode(formData: FormData) {
       title: formData.get("title") as string,
       description: (formData.get("description") as string) || null,
       duration: (formData.get("duration") as string) || null,
-      audio_url: (formData.get("audio_url") as string) || null,
+      audio_url: await resolveAudioUrl(formData),
       peaks_json_url: (formData.get("peaks_json_url") as string) || null,
       image_url: await resolveImageUrl(formData),
       visibility: formData.get("visibility") as string,
