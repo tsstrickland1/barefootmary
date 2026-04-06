@@ -136,6 +136,7 @@ export function Nav() {
 
         {/* Right: nav links + CTA — desktop only; hidden on mobile */}
         <div className="hidden md:flex items-center gap-6">
+          {/* Nav links — left-anchored (close to logo) */}
           {rightNavLinks.map((link) => (
             <Link
               key={link.href}
@@ -149,50 +150,54 @@ export function Nav() {
               {link.label}
             </Link>
           ))}
-          {user ? (
-            <div ref={dropdownRef} className="relative">
-              <button
-                onClick={() => setIsDropdownOpen((v) => !v)}
-                className="w-8 h-8 rounded-full bg-amber flex items-center justify-center font-label text-xs font-semibold text-bg-deep uppercase tracking-wide cursor-pointer transition-opacity duration-200 hover:opacity-80"
-                aria-label="User menu"
-                aria-expanded={isDropdownOpen}
-                aria-haspopup="true"
-              >
-                {user.email?.[0]?.toUpperCase() ?? "U"}
-              </button>
-              {isDropdownOpen && (
-                <div className="absolute right-0 top-full mt-2 min-w-[160px] bg-[rgba(14,12,10,0.98)] border border-border py-1 z-10">
-                  <Link
-                    href="/account"
-                    className="block px-4 py-2 font-label text-xs tracking-[0.15em] uppercase text-cream-dim hover:text-cream transition-colors duration-200 no-underline"
-                  >
-                    Account
-                  </Link>
-                  {isAdmin && (
+
+          {/* Utility — right-anchored */}
+          <div className="ml-auto flex items-center gap-4">
+            {user ? (
+              <div ref={dropdownRef} className="relative">
+                <button
+                  onClick={() => setIsDropdownOpen((v) => !v)}
+                  className="w-8 h-8 rounded-full bg-amber flex items-center justify-center font-label text-xs font-semibold text-bg-deep uppercase tracking-wide cursor-pointer transition-opacity duration-200 hover:opacity-80"
+                  aria-label="User menu"
+                  aria-expanded={isDropdownOpen}
+                  aria-haspopup="true"
+                >
+                  {user.email?.[0]?.toUpperCase() ?? "U"}
+                </button>
+                {isDropdownOpen && (
+                  <div className="absolute right-0 top-full mt-2 min-w-[160px] bg-[rgba(14,12,10,0.98)] border border-border py-1 z-10">
                     <Link
-                      href="/admin"
-                      className="block px-4 py-2 font-label text-xs tracking-[0.15em] uppercase text-amber hover:text-amber-light transition-colors duration-200 no-underline"
+                      href="/account"
+                      className="block px-4 py-2 font-label text-xs tracking-[0.15em] uppercase text-cream-dim hover:text-cream transition-colors duration-200 no-underline"
                     >
-                      Admin Dashboard
+                      Account
                     </Link>
-                  )}
-                </div>
-              )}
-            </div>
-          ) : (
+                    {isAdmin && (
+                      <Link
+                        href="/admin"
+                        className="block px-4 py-2 font-label text-xs tracking-[0.15em] uppercase text-amber hover:text-amber-light transition-colors duration-200 no-underline"
+                      >
+                        Admin Dashboard
+                      </Link>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                href={`/login?redirect=${encodeURIComponent(pathname)}`}
+                className="font-label text-xs font-medium tracking-[0.2em] uppercase no-underline whitespace-nowrap text-cream-dim hover:text-cream transition-colors duration-200"
+              >
+                Sign In
+              </Link>
+            )}
             <Link
-              href={`/login?redirect=${encodeURIComponent(pathname)}`}
-              className="font-label text-xs font-medium tracking-[0.2em] uppercase no-underline whitespace-nowrap text-cream-dim hover:text-cream transition-colors duration-200"
+              href="/subscribe"
+              className="font-label text-[0.7rem] font-semibold tracking-[0.18em] uppercase text-bg-deep bg-amber px-5 py-2 no-underline transition-colors duration-200 hover:bg-amber-light whitespace-nowrap"
             >
-              Sign In
+              Subscribe
             </Link>
-          )}
-          <Link
-            href="/subscribe"
-            className="font-label text-[0.7rem] font-semibold tracking-[0.18em] uppercase text-bg-deep bg-amber px-5 py-2 no-underline transition-colors duration-200 hover:bg-amber-light whitespace-nowrap ml-2"
-          >
-            Subscribe
-          </Link>
+          </div>
         </div>
       </nav>
 
