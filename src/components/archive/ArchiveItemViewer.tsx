@@ -256,7 +256,7 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
             return (
               <div
                 key={i}
-                className="w-[2px] rounded-full shrink-0 relative z-10"
+                className="flex-1 rounded-full relative z-10"
                 style={{
                   height: `${Math.max(3, amp * 44)}px`,
                   backgroundColor: isPlayed
