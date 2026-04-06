@@ -130,7 +130,17 @@ export default async function HomePage() {
               )}
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-6">
+              {currentSeason.image_url && (
+                <div className="overflow-hidden h-52">
+                  <img
+                    src={currentSeason.image_url}
+                    alt={currentSeason.title}
+                    className="w-full h-full object-cover"
+                    draggable={false}
+                  />
+                </div>
+              )}
               <div className="flex items-baseline gap-5 py-5">
                 <div className="font-display text-[3rem] font-light text-amber leading-none min-w-[72px]">
                   {episodes.length}
