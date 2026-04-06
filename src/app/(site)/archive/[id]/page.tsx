@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { ArchiveItemViewer } from "@/components/archive/ArchiveItemViewer";
 
 export async function generateMetadata({
@@ -34,6 +35,12 @@ export default async function ArchiveItemPage({
     .single();
 
   if (!item) notFound();
+
+  const adminSupabase = createAdminClient();
+  const { data: signedData } = await adminSupabase.storage
+    .from("archive")
+    .createSignedUrl(item.file_path, 3600);
+  const fileUrl = signedData?.signedUrl ?? "";
 
   const episodeLabel = item.episodes
     ? `Episode ${item.episodes.number}, Season ${item.episodes.seasons?.numeral}`
@@ -107,7 +114,7 @@ export default async function ArchiveItemPage({
           </Link>
         </div>
       ) : (
-        <ArchiveItemViewer item={item} />
+        <ArchiveItemViewer item={item} fileUrl={fileUrl} />
       )}
 
       {/* Back link */}
