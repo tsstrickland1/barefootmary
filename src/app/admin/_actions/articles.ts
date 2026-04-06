@@ -65,3 +65,16 @@ export async function deleteArticle(formData: FormData) {
   if (error) redirect(`/admin/articles?error=${encodeURIComponent(error.message)}`);
   redirect("/admin/articles?success=Article+deleted");
 }
+
+export async function uploadArticleBodyImage(
+  formData: FormData
+): Promise<{ url: string } | { error: string }> {
+  try {
+    const file = formData.get("image") as File;
+    if (!file || file.size === 0) return { error: "No file provided" };
+    const url = await uploadImage(file, "articles");
+    return { url };
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Upload failed" };
+  }
+}

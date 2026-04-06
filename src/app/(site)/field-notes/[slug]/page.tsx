@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { generateHTML } from "@tiptap/core";
 import { createClient } from "@/lib/supabase/server";
+import { editorExtensions } from "@/lib/tiptap/extensions";
 
 export async function generateMetadata({
   params,
@@ -44,6 +46,18 @@ export default async function ArticlePage({
     .order("created_at");
 
   const isSubscriberOnly = article.visibility !== "public";
+
+  let bodyHtml: string | null = null;
+  try {
+    if (article.body_json) {
+      bodyHtml = generateHTML(
+        article.body_json as Record<string, unknown>,
+        editorExtensions
+      );
+    }
+  } catch {
+    bodyHtml = null;
+  }
 
   const bylineParts: string[] = [article.author];
   if (article.published_at) {
@@ -89,18 +103,19 @@ export default async function ArticlePage({
         {byline}
       </div>
 
-      {/* Article body placeholder */}
-      <div className="text-[1rem] text-cream-dim leading-[2] font-body space-y-6">
+      {/* Article body */}
+      <div className="space-y-6">
         {article.excerpt ? (
-          <p className="text-[1.05rem] text-cream leading-[1.88] italic font-light">
+          <p className="text-[1.05rem] text-cream leading-[1.88] italic font-light font-body">
             {article.excerpt}
           </p>
         ) : null}
-        <p>
-          Full article content will be rendered here from the TipTap JSON
-          stored in Supabase. The block editor supports rich text, embedded
-          images, pull quotes, audio clips, and footnotes.
-        </p>
+        {bodyHtml && (
+          <div
+            className="tiptap-content"
+            dangerouslySetInnerHTML={{ __html: bodyHtml }}
+          />
+        )}
         {isSubscriberOnly && (
           <div className="bg-bg-surface border border-border p-8 text-center my-8">
             <div className="font-display text-[1.5rem] font-light text-cream mb-2">
