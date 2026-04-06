@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { EpisodePlayer } from "@/components/episodes/EpisodePlayer";
 
 const ordinalWords = ["One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten"];
@@ -33,6 +34,19 @@ export default async function EpisodePage({
     : { data: null };
 
   if (!season || !episode) notFound();
+
+  // The audio bucket is private; getPublicUrl() URLs don't work for private buckets.
+  // Generate a short-lived signed URL server-side (same pattern as archive items).
+  let audioUrl: string | null = null;
+  if (episode.audio_url) {
+    const storagePath = new URL(episode.audio_url).pathname
+      .replace("/storage/v1/object/public/audio/", "");
+    const adminSupabase = createAdminClient();
+    const { data: signedData } = await adminSupabase.storage
+      .from("audio")
+      .createSignedUrl(storagePath, 3600);
+    audioUrl = signedData?.signedUrl ?? null;
+  }
 
   const { data: relatedArchive } = await supabase
     .from("archive_items")
@@ -87,7 +101,7 @@ export default async function EpisodePage({
       {/* Audio player */}
       <EpisodePlayer
         title={episode.title}
-        audioUrl={episode.audio_url}
+        audioUrl={audioUrl}
         duration={episode.duration}
       />
 
