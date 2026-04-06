@@ -2,6 +2,11 @@
 
 import { useAudio } from "@/components/audio/AudioProvider";
 
+// Same static waveform shape used by ArchiveItemViewer when not playing
+const STATIC_BARS = Array.from({ length: 60 }, (_, i) =>
+  0.15 + Math.abs(Math.sin(i * 0.8) * 0.25 + Math.sin(i * 0.3) * 0.3)
+);
+
 interface EpisodePlayerProps {
   title: string;
   audioUrl: string | null;
@@ -23,11 +28,11 @@ export function EpisodePlayer({ title, audioUrl, duration }: EpisodePlayerProps)
 
   if (!audioUrl) {
     return (
-      <div className="bg-bg-surface border border-border p-8 mb-12">
-        <div className="font-label text-[0.65rem] font-medium tracking-[0.22em] uppercase text-amber mb-4">
+      <div className="bg-bg-deep border border-border p-10 mb-12">
+        <div className="font-label text-[0.65rem] font-medium tracking-[0.22em] uppercase text-amber mb-6">
           Listen
         </div>
-        <div className="h-16 bg-bg-deep border border-border flex items-center justify-center">
+        <div className="h-14 bg-[rgba(196,154,60,0.04)] border border-border flex items-center justify-center">
           <span className="font-label text-[0.72rem] tracking-[0.1em] text-cream-dim">
             Audio coming soon
           </span>
@@ -37,15 +42,56 @@ export function EpisodePlayer({ title, audioUrl, duration }: EpisodePlayerProps)
   }
 
   return (
-    <div className="bg-bg-surface border border-border p-8 mb-12">
+    <div className="bg-bg-deep border border-border p-10 mb-12">
       <div className="font-label text-[0.65rem] font-medium tracking-[0.22em] uppercase text-amber mb-6">
         Listen
       </div>
 
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-6">
+        {/* Waveform — click to seek when active, or to start playback when inactive */}
+        <div
+          className="relative h-14 bg-[rgba(196,154,60,0.04)] border border-border flex items-center gap-[2px] px-4 cursor-pointer overflow-hidden"
+          onClick={(e) => {
+            if (isActive) {
+              const rect = e.currentTarget.getBoundingClientRect();
+              seek((e.clientX - rect.left) / rect.width);
+            } else {
+              play({ title, audioUrl, duration });
+            }
+          }}
+        >
+          {/* Played-region tint */}
+          <div
+            className="absolute inset-y-0 left-0 bg-[rgba(196,154,60,0.07)] pointer-events-none"
+            style={{ width: `${progress * 100}%` }}
+          />
+          {/* Playhead */}
+          {progress > 0 && (
+            <div
+              className="absolute inset-y-0 w-px bg-[rgba(196,154,60,0.5)] pointer-events-none"
+              style={{ left: `${progress * 100}%` }}
+            />
+          )}
+          {/* Bars */}
+          {STATIC_BARS.map((amp, i) => {
+            const isPlayed = isActive && (i + 0.5) / STATIC_BARS.length < progress;
+            return (
+              <div
+                key={i}
+                className="flex-1 rounded-full relative z-10"
+                style={{
+                  height: `${Math.max(3, amp * 44)}px`,
+                  backgroundColor: isPlayed
+                    ? "rgba(196,154,60,0.85)"
+                    : "rgba(196,154,60,0.25)",
+                }}
+              />
+            );
+          })}
+        </div>
+
         {/* Controls row */}
         <div className="flex items-center gap-4">
-          {/* Play / Pause */}
           <button
             onClick={async () => {
               if (isActive) {
@@ -69,12 +115,10 @@ export function EpisodePlayer({ title, audioUrl, duration }: EpisodePlayerProps)
             )}
           </button>
 
-          {/* Elapsed time */}
           <span className="font-label text-[0.65rem] tracking-[0.08em] text-cream-dim tabular-nums w-10 text-right shrink-0">
             {isActive ? formatTime(currentTime) : "0:00"}
           </span>
 
-          {/* Seek bar */}
           <div
             className={`flex-1 h-px bg-[rgba(196,154,60,0.15)] relative group ${isActive ? "cursor-pointer" : "cursor-default"}`}
             onClick={(e) => {
@@ -95,14 +139,13 @@ export function EpisodePlayer({ title, audioUrl, duration }: EpisodePlayerProps)
             )}
           </div>
 
-          {/* Duration */}
           <span className="font-label text-[0.65rem] tracking-[0.08em] text-cream-dim tabular-nums w-10 shrink-0">
             {isActive && audioDuration > 0 ? formatTime(audioDuration) : duration}
           </span>
         </div>
 
         {!isActive && (
-          <p className="font-label text-[0.6rem] tracking-[0.1em] uppercase text-cream-dim">
+          <p className="font-label text-[0.6rem] tracking-[0.1em] uppercase text-cream-dim text-center">
             Press play · continues in background while you browse
           </p>
         )}
