@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { uploadImage } from "@/lib/supabase/uploadImage";
-import { uploadAudio } from "@/lib/supabase/uploadAudio";
 
 async function resolveImageUrl(formData: FormData): Promise<string | null> {
   const file = formData.get("image_file") as File | null;
@@ -11,20 +10,21 @@ async function resolveImageUrl(formData: FormData): Promise<string | null> {
   return (formData.get("image_url") as string) || null;
 }
 
-async function resolveAudioUrl(formData: FormData): Promise<string | null> {
-  const file = formData.get("audio_file") as File | null;
-  if (file && file.size > 0) return uploadAudio(file);
-  return (formData.get("audio_url") as string) || null;
-}
-
 export async function createEpisode(formData: FormData) {
   const supabase = createAdminClient();
-  let audio_url: string | null = null;
-  try {
-    audio_url = await resolveAudioUrl(formData);
-  } catch (e) {
-    redirect(`/admin/episodes?error=${encodeURIComponent(String(e))}`);
+
+  const audioFile = formData.get("audio_file") as File | null;
+  let audio_url: string | null = (formData.get("audio_url") as string) || null;
+  if (audioFile && audioFile.size > 0) {
+    const ext = audioFile.name.split(".").pop() ?? "mp3";
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error: audioErr } = await supabase.storage
+      .from("audio")
+      .upload(path, audioFile, { contentType: audioFile.type, upsert: false });
+    if (audioErr) redirect(`/admin/episodes?error=${encodeURIComponent(`Audio upload failed: ${audioErr.message}`)}`);
+    audio_url = supabase.storage.from("audio").getPublicUrl(path).data.publicUrl;
   }
+
   const { error } = await supabase.from("episodes").insert({
     season_id: formData.get("season_id") as string,
     slug: formData.get("slug") as string,
@@ -45,12 +45,19 @@ export async function createEpisode(formData: FormData) {
 export async function updateEpisode(formData: FormData) {
   const supabase = createAdminClient();
   const id = formData.get("id") as string;
-  let audio_url: string | null = null;
-  try {
-    audio_url = await resolveAudioUrl(formData);
-  } catch (e) {
-    redirect(`/admin/episodes/${id}?error=${encodeURIComponent(String(e))}`);
+
+  const audioFile = formData.get("audio_file") as File | null;
+  let audio_url: string | null = (formData.get("audio_url") as string) || null;
+  if (audioFile && audioFile.size > 0) {
+    const ext = audioFile.name.split(".").pop() ?? "mp3";
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error: audioErr } = await supabase.storage
+      .from("audio")
+      .upload(path, audioFile, { contentType: audioFile.type, upsert: false });
+    if (audioErr) redirect(`/admin/episodes/${id}?error=${encodeURIComponent(`Audio upload failed: ${audioErr.message}`)}`);
+    audio_url = supabase.storage.from("audio").getPublicUrl(path).data.publicUrl;
   }
+
   const { error } = await supabase
     .from("episodes")
     .update({
