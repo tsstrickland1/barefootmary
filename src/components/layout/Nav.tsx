@@ -180,6 +180,12 @@ export function Nav() {
                         Admin Dashboard
                       </Link>
                     )}
+                    <a
+                      href="/api/auth/signout"
+                      className="block px-4 py-2 font-label text-xs tracking-[0.15em] uppercase text-cream-dim hover:text-cream transition-colors duration-200 no-underline border-t border-border mt-1 pt-2"
+                    >
+                      Sign Out
+                    </a>
                   </div>
                 )}
               </div>
@@ -250,13 +256,22 @@ export function Nav() {
               Subscribe
             </Link>
             {user ? (
-              <Link
-                href="/account"
-                className="block w-full text-center font-label text-[0.7rem] tracking-[0.18em] uppercase text-cream-dim border border-border py-3 no-underline hover:text-cream transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                Account
-              </Link>
+              <>
+                <Link
+                  href="/account"
+                  className="block w-full text-center font-label text-[0.7rem] tracking-[0.18em] uppercase text-cream-dim border border-border py-3 no-underline hover:text-cream transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Account
+                </Link>
+                <a
+                  href="/api/auth/signout"
+                  className="block w-full text-center font-label text-[0.7rem] tracking-[0.18em] uppercase text-cream-dim border border-border py-3 no-underline hover:text-cream transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Sign Out
+                </a>
+              </>
             ) : (
               <Link
                 href="/login"
