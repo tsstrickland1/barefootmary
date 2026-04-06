@@ -158,12 +158,12 @@ export default async function HomePage() {
           <SectionHeader
             label={`Season ${numberToWord(currentSeason.number)} · ${currentSeason.title}`}
             title="Episodes"
-            linkText="Full Archive →"
+            linkText="All Episodes →"
             linkHref={`/episodes/${currentSeason.slug}`}
           />
 
           <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-px bg-border border border-border">
-            {episodes.map((ep) => (
+            {episodes.slice(0, 6).map((ep) => (
               <EpisodeCard key={ep.slug} ep={ep} />
             ))}
           </div>
