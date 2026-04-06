@@ -108,10 +108,21 @@ export default async function HomePage() {
             linkHref="/episodes"
           />
 
-          <div className="bg-bg-surface border border-border p-12 grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative overflow-hidden max-md:p-6">
+          <div className={`bg-bg-surface border border-border p-12 grid grid-cols-1 gap-12 items-stretch relative overflow-hidden max-md:p-6${currentSeason.image_url ? " md:grid-cols-2" : ""}`}>
             <span className="absolute right-[-0.08em] top-[-0.2em] font-display text-[20rem] font-light text-[rgba(196,154,60,0.035)] leading-none pointer-events-none select-none">
               {currentSeason.numeral}
             </span>
+
+            {currentSeason.image_url && (
+              <div className="order-first md:order-last -m-12 max-md:-mx-6 max-md:-mt-6 md:my-[-3rem] md:mr-[-3rem] overflow-hidden min-h-[14rem] md:min-h-0">
+                <img
+                  src={currentSeason.image_url}
+                  alt={currentSeason.title}
+                  className="w-full h-full object-cover"
+                  draggable={false}
+                />
+              </div>
+            )}
 
             <div>
               <div className="font-label text-[0.65rem] font-semibold tracking-[0.22em] uppercase text-teal-light mb-3">
@@ -124,24 +135,11 @@ export default async function HomePage() {
                 {currentSeason.subtitle}
               </div>
               {currentSeason.description && (
-                <p className="text-[0.88rem] text-cream-dim leading-[1.85] font-body max-w-[460px]">
+                <p className="text-[0.88rem] text-cream-dim leading-[1.85] font-body max-w-[460px] mb-6">
                   {currentSeason.description}
                 </p>
               )}
-            </div>
-
-            <div className="flex flex-col gap-6">
-              {currentSeason.image_url && (
-                <div className="overflow-hidden h-52">
-                  <img
-                    src={currentSeason.image_url}
-                    alt={currentSeason.title}
-                    className="w-full h-full object-cover"
-                    draggable={false}
-                  />
-                </div>
-              )}
-              <div className="flex items-baseline gap-5 py-5">
+              <div className="flex items-baseline gap-5 pt-2">
                 <div className="font-display text-[3rem] font-light text-amber leading-none min-w-[72px]">
                   {episodes.length}
                 </div>
