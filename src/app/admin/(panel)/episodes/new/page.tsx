@@ -40,7 +40,7 @@ export default async function NewEpisodePage() {
               id="number"
               name="number"
               type="number"
-              min={1}
+              min={0}
               required
               className="form-input"
             />

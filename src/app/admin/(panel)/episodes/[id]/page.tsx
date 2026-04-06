@@ -66,7 +66,7 @@ export default async function EditEpisodePage({
               id="number"
               name="number"
               type="number"
-              min={1}
+              min={0}
               required
               defaultValue={episode.number}
               className="form-input"
