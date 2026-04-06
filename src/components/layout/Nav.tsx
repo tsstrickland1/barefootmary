@@ -210,7 +210,7 @@ export function Nav() {
       {/* Mobile menu overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-[60] bg-[rgba(14,12,10,0.97)] flex flex-col"
+          className="fixed inset-x-0 top-0 h-dvh z-[60] bg-[rgba(14,12,10,0.97)] flex flex-col"
           onClick={(e) => {
             if (e.target === e.currentTarget) setIsOpen(false);
           }}
@@ -233,7 +233,7 @@ export function Nav() {
           </div>
 
           {/* Nav links */}
-          <nav className="flex flex-col px-6 py-8 gap-1 flex-1">
+          <nav className="flex flex-col px-6 py-8 gap-1 flex-1 overflow-y-auto">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
