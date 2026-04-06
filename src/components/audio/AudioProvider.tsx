@@ -92,7 +92,6 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     if (episode?.audioUrl !== ep.audioUrl) {
       // New episode — load it
       audio.src = ep.audioUrl;
-      audio.load();
       setEpisode(ep);
       setCurrentTime(0);
       setAudioDuration(0);
@@ -136,7 +135,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   return (
     <AudioCtx.Provider value={{ episode, playing, currentTime, audioDuration, play, togglePlay, seek, dismiss }}>
       {/* Hidden audio element — persists across all navigation */}
-      <audio ref={audioRef} preload="metadata" crossOrigin="anonymous" />
+      <audio ref={audioRef} preload="metadata" />
       {children}
     </AudioCtx.Provider>
   );
