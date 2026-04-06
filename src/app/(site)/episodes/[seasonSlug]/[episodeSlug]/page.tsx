@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { sampleArchiveItems } from "@/lib/sample-data";
 import { createClient } from "@/lib/supabase/server";
 
 const ordinalWords = ["One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten"];
@@ -34,11 +33,13 @@ export default async function EpisodePage({
 
   if (!season || !episode) notFound();
 
+  const { data: relatedArchive } = await supabase
+    .from("archive_items")
+    .select("id, title, type, visibility")
+    .eq("episode_id", episode.id);
+
   const isFree = episode.visibility === "public";
   const seasonLabel = `Season ${numberToWord(season.number)}`;
-  const relatedArchive = sampleArchiveItems.filter(
-    (item) => item.episode === `Episode ${episode.number}`
-  );
 
   return (
     <article className="px-12 py-20 max-w-4xl mx-auto max-md:px-6 max-md:py-12">
@@ -119,7 +120,7 @@ export default async function EpisodePage({
       </div>
 
       {/* Related archive items */}
-      {relatedArchive.length > 0 && (
+      {relatedArchive && relatedArchive.length > 0 && (
         <div>
           <h2 className="font-label text-[0.67rem] font-semibold tracking-[0.24em] uppercase text-amber mb-4">
             Related Archive Items

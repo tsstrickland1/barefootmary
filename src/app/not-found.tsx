@@ -1,12 +1,8 @@
 import Link from "next/link";
-import { Nav } from "@/components/layout/Nav";
-import { Footer } from "@/components/layout/Footer";
 
 export default function NotFound() {
   return (
-    <>
-      <Nav />
-      <main className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-24 text-center">
+    <main className="min-h-[80vh] flex flex-col items-center justify-center px-6 py-24 text-center">
         <div className="font-display text-[clamp(8rem,20vw,16rem)] font-light leading-none text-[rgba(196,154,60,0.12)] select-none">
           404
         </div>
@@ -34,8 +30,6 @@ export default function NotFound() {
             Browse the Archive
           </Link>
         </div>
-      </main>
-      <Footer />
-    </>
+    </main>
   );
 }
