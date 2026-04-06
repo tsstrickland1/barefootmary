@@ -127,13 +127,24 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
       cancelAnimationFrame(animRef.current);
       setBars(STATIC_BARS);
     };
+    // Pause this viewer when the global sticky player starts playing
+    const onGlobalPlay = () => {
+      if (!audio.paused) {
+        audio.pause();
+        setPlaying(false);
+        cancelAnimationFrame(animRef.current);
+        setBars(STATIC_BARS);
+      }
+    };
     audio.addEventListener("timeupdate", onTime);
     audio.addEventListener("loadedmetadata", onMeta);
     audio.addEventListener("ended", onEnded);
+    window.addEventListener("barefoot:global-audio-play", onGlobalPlay);
     return () => {
       audio.removeEventListener("timeupdate", onTime);
       audio.removeEventListener("loadedmetadata", onMeta);
       audio.removeEventListener("ended", onEnded);
+      window.removeEventListener("barefoot:global-audio-play", onGlobalPlay);
       cancelAnimationFrame(animRef.current);
       audioCtxRef.current?.close();
     };
@@ -187,6 +198,8 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
       setBars(STATIC_BARS);
     } else {
       initAudioContext();
+      // Notify the global sticky player (and other archive viewers) to pause
+      window.dispatchEvent(new Event("barefoot:external-audio-play"));
       // Always resume — Safari and some Chrome versions start AudioContext
       // in "suspended" even during a user gesture.
       await audioCtxRef.current!.resume();
