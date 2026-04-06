@@ -102,49 +102,211 @@ function ImageViewer({ title, src }: { title: string; src: string }) {
   );
 }
 
+const STATIC_BARS = Array.from({ length: 60 }, (_, i) =>
+  0.15 + Math.abs(Math.sin(i * 0.8) * 0.25 + Math.sin(i * 0.3) * 0.3)
+);
+
 function AudioViewer({ title, src }: { title: string; src: string }) {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const animRef = useRef<number>(0);
+
+  const [playing, setPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [freqBars, setFreqBars] = useState<number[]>(STATIC_BARS);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const onTime = () => setCurrentTime(audio.currentTime);
+    const onMeta = () => setDuration(audio.duration);
+    const onEnded = () => {
+      setPlaying(false);
+      cancelAnimationFrame(animRef.current);
+      setFreqBars(STATIC_BARS);
+    };
+    audio.addEventListener("timeupdate", onTime);
+    audio.addEventListener("loadedmetadata", onMeta);
+    audio.addEventListener("ended", onEnded);
+    return () => {
+      audio.removeEventListener("timeupdate", onTime);
+      audio.removeEventListener("loadedmetadata", onMeta);
+      audio.removeEventListener("ended", onEnded);
+      cancelAnimationFrame(animRef.current);
+      audioCtxRef.current?.close();
+    };
+  }, []);
+
+  function initAudioContext() {
+    if (audioCtxRef.current) return;
+    const audio = audioRef.current!;
+    const ctx = new AudioContext();
+    const source = ctx.createMediaElementSource(audio);
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 256;
+    analyser.smoothingTimeConstant = 0.8;
+    source.connect(analyser);
+    analyser.connect(ctx.destination);
+    audioCtxRef.current = ctx;
+    analyserRef.current = analyser;
+  }
+
+  function startAnimation() {
+    const analyser = analyserRef.current!;
+    const data = new Uint8Array(analyser.frequencyBinCount);
+    function tick() {
+      analyser.getByteFrequencyData(data);
+      const bars = Array.from({ length: 60 }, (_, i) => {
+        const idx = Math.floor(Math.pow(i / 60, 1.4) * data.length);
+        return data[Math.min(idx, data.length - 1)] / 255;
+      });
+      setFreqBars(bars);
+      animRef.current = requestAnimationFrame(tick);
+    }
+    tick();
+  }
+
+  async function togglePlay() {
+    const audio = audioRef.current!;
+    if (playing) {
+      audio.pause();
+      setPlaying(false);
+      cancelAnimationFrame(animRef.current);
+      setFreqBars(STATIC_BARS);
+    } else {
+      initAudioContext();
+      if (audioCtxRef.current?.state === "suspended") {
+        await audioCtxRef.current.resume();
+      }
+      await audio.play();
+      setPlaying(true);
+      startAnimation();
+    }
+  }
+
+  function seek(ratio: number) {
+    const audio = audioRef.current!;
+    if (!duration) return;
+    audio.currentTime = Math.max(0, Math.min(1, ratio)) * duration;
+  }
+
+  function formatTime(s: number) {
+    if (!isFinite(s) || isNaN(s)) return "0:00";
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60).toString().padStart(2, "0");
+    return `${m}:${sec}`;
+  }
+
+  const progress = duration > 0 ? currentTime / duration : 0;
 
   return (
     <div
       className="w-full bg-bg-deep border border-border p-10"
       onContextMenu={(e) => e.preventDefault()}
     >
+      {/* Hidden audio element — playback only, no native controls */}
+      <audio ref={audioRef} src={src} preload="metadata" />
+
       <div className="max-w-xl mx-auto flex flex-col gap-6">
+        {/* Header */}
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 border border-amber-dim flex items-center justify-center font-label text-[0.65rem] tracking-[0.1em] text-amber uppercase shrink-0">
             AUD
           </div>
-          <div>
-            <p className="font-display text-[1rem] text-cream leading-[1.3]">{title}</p>
-          </div>
+          <p className="font-display text-[1rem] text-cream leading-[1.3]">
+            {title}
+          </p>
         </div>
 
-        {/* Waveform visualization placeholder */}
-        <div className="h-14 bg-[rgba(196,154,60,0.04)] border border-border flex items-center justify-center gap-[2px] px-4">
-          {Array.from({ length: 60 }).map((_, i) => (
-            <div
-              key={i}
-              className="w-[2px] bg-amber-dim rounded-full shrink-0"
-              style={{
-                height: `${8 + Math.sin(i * 0.8) * 10 + Math.sin(i * 0.3) * 12}px`,
-                opacity: 0.4 + Math.abs(Math.sin(i * 0.5)) * 0.6,
-              }}
-            />
-          ))}
-        </div>
-
-        <audio
-          ref={audioRef}
-          controls
-          controlsList="nodownload"
-          onContextMenu={(e) => e.preventDefault()}
-          className="w-full"
-          style={{ colorScheme: "dark" }}
+        {/* Waveform — clickable to seek */}
+        <div
+          className="relative h-14 bg-[rgba(196,154,60,0.04)] border border-border flex items-center gap-[2px] px-4 cursor-pointer overflow-hidden"
+          onClick={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            seek((e.clientX - rect.left) / rect.width);
+          }}
         >
-          <source src={src} type="audio/mpeg" />
-          Your browser does not support the audio element.
-        </audio>
+          {/* Played region overlay */}
+          <div
+            className="absolute inset-y-0 left-0 bg-[rgba(196,154,60,0.07)] pointer-events-none"
+            style={{ width: `${progress * 100}%` }}
+          />
+          {/* Playhead */}
+          {progress > 0 && (
+            <div
+              className="absolute inset-y-0 w-px bg-[rgba(196,154,60,0.5)] pointer-events-none"
+              style={{ left: `${progress * 100}%` }}
+            />
+          )}
+          {/* Bars */}
+          {freqBars.map((amp, i) => {
+            const isPlayed = (i + 0.5) / freqBars.length < progress;
+            return (
+              <div
+                key={i}
+                className="w-[2px] rounded-full shrink-0 relative z-10"
+                style={{
+                  height: `${Math.max(3, amp * 44)}px`,
+                  backgroundColor: isPlayed
+                    ? "rgba(196,154,60,0.85)"
+                    : "rgba(196,154,60,0.25)",
+                  transition: playing ? "height 80ms ease-out" : "none",
+                }}
+              />
+            );
+          })}
+        </div>
+
+        {/* Controls */}
+        <div className="flex items-center gap-4">
+          {/* Play / Pause */}
+          <button
+            onClick={togglePlay}
+            className="w-10 h-10 border border-amber-dim flex items-center justify-center text-amber hover:border-amber transition-colors duration-200 shrink-0"
+            aria-label={playing ? "Pause" : "Play"}
+          >
+            {playing ? (
+              <svg width="10" height="12" viewBox="0 0 10 12" fill="currentColor">
+                <rect x="0" y="0" width="3.5" height="12" rx="0.5" />
+                <rect x="6.5" y="0" width="3.5" height="12" rx="0.5" />
+              </svg>
+            ) : (
+              <svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor">
+                <path d="M0.5 0.5 L10.5 6.5 L0.5 12.5 Z" />
+              </svg>
+            )}
+          </button>
+
+          {/* Elapsed */}
+          <span className="font-label text-[0.65rem] tracking-[0.08em] text-cream-dim tabular-nums w-10 text-right shrink-0">
+            {formatTime(currentTime)}
+          </span>
+
+          {/* Seek bar */}
+          <div
+            className="flex-1 h-px bg-[rgba(196,154,60,0.15)] relative cursor-pointer group"
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              seek((e.clientX - rect.left) / rect.width);
+            }}
+          >
+            <div
+              className="absolute inset-y-0 left-0 bg-amber-dim"
+              style={{ width: `${progress * 100}%` }}
+            />
+            <div
+              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-2 h-2 bg-amber rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+              style={{ left: `${progress * 100}%` }}
+            />
+          </div>
+
+          {/* Duration */}
+          <span className="font-label text-[0.65rem] tracking-[0.08em] text-cream-dim tabular-nums w-10 shrink-0">
+            {formatTime(duration)}
+          </span>
+        </div>
 
         <p className="font-label text-[0.6rem] tracking-[0.1em] uppercase text-cream-dim text-center">
           Streaming from secure storage · download not available
