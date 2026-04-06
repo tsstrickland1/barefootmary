@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { sampleArchiveItems } from "@/lib/sample-data";
+import { createClient } from "@/lib/supabase/server";
 import { ArchiveItemViewer } from "@/components/archive/ArchiveItemViewer";
 
 export async function generateMetadata({
@@ -9,7 +9,12 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const item = sampleArchiveItems.find((i) => i.id === id);
+  const supabase = await createClient();
+  const { data: item } = await supabase
+    .from("archive_items")
+    .select("title")
+    .eq("id", id)
+    .single();
   return {
     title: item ? `${item.title} — The Archive — Barefoot Mary` : "Archive — Barefoot Mary",
   };
@@ -21,9 +26,18 @@ export default async function ArchiveItemPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const item = sampleArchiveItems.find((i) => i.id === id);
+  const supabase = await createClient();
+  const { data: item } = await supabase
+    .from("archive_items")
+    .select(`*, episodes(title, number, seasons(numeral))`)
+    .eq("id", id)
+    .single();
 
   if (!item) notFound();
+
+  const episodeLabel = item.episodes
+    ? `Episode ${item.episodes.number}, Season ${item.episodes.seasons?.numeral}`
+    : null;
 
   const isSubscriberOnly = item.visibility !== "public";
 
@@ -54,9 +68,11 @@ export default async function ArchiveItemPage({
           >
             {item.visibility === "public" ? "Free" : "🔒 Subscriber"}
           </span>
-          <span className="font-label text-[0.62rem] text-cream-dim tracking-[0.05em] ml-auto">
-            {item.episode}
-          </span>
+          {episodeLabel && (
+            <span className="font-label text-[0.62rem] text-cream-dim tracking-[0.05em] ml-auto">
+              {episodeLabel}
+            </span>
+          )}
         </div>
 
         <h1 className="font-display text-[clamp(1.6rem,3.5vw,2.8rem)] font-light text-cream leading-[1.1] mb-5">
