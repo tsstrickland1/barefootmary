@@ -3,7 +3,6 @@
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { uploadImage } from "@/lib/supabase/uploadImage";
-import { uploadAudio } from "@/lib/supabase/uploadAudio";
 
 async function resolveImageUrl(formData: FormData): Promise<string | null> {
   const file = formData.get("image_file") as File | null;
@@ -14,10 +13,7 @@ async function resolveImageUrl(formData: FormData): Promise<string | null> {
 export async function createEpisode(formData: FormData) {
   const supabase = createAdminClient();
 
-  const audioFile = formData.get("audio_file") as File | null;
-  const audio_url = audioFile && audioFile.size > 0
-    ? await uploadAudio(audioFile)
-    : (formData.get("audio_url") as string) || null;
+  const audio_url = (formData.get("audio_url") as string) || null;
 
   const { error } = await supabase.from("episodes").insert({
     season_id: formData.get("season_id") as string,
@@ -40,10 +36,7 @@ export async function updateEpisode(formData: FormData) {
   const supabase = createAdminClient();
   const id = formData.get("id") as string;
 
-  const audioFile = formData.get("audio_file") as File | null;
-  const audio_url = audioFile && audioFile.size > 0
-    ? await uploadAudio(audioFile)
-    : (formData.get("audio_url") as string) || null;
+  const audio_url = (formData.get("audio_url") as string) || null;
 
   const { error } = await supabase
     .from("episodes")
