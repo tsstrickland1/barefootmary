@@ -60,7 +60,7 @@ export default async function HomePage() {
               className="w-full h-full object-cover object-center"
               draggable={false}
             />
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(14,12,10,0.92)_0%,rgba(14,12,10,0.7)_45%,rgba(14,12,10,0.25)_70%,transparent_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(14,12,10,0.92)_0%,rgba(14,12,10,0.7)_55%,rgba(14,12,10,0.25)_80%,transparent_100%)]" />
           </div>
         )}
 
@@ -80,14 +80,9 @@ export default async function HomePage() {
               {currentSeason.title}
             </h1>
             {currentSeason.subtitle && (
-              <div className="font-display text-[1.1rem] font-light italic text-teal-light mb-4 max-w-[560px]">
+              <div className="font-display text-[1.1rem] font-light italic text-teal-light mb-8 max-w-[560px]">
                 {currentSeason.subtitle}
               </div>
-            )}
-            {currentSeason.description && (
-              <p className="font-body text-[0.88rem] font-light text-cream-dim max-w-[460px] leading-[1.75] mb-8">
-                {currentSeason.description}
-              </p>
             )}
           </>
         ) : (
