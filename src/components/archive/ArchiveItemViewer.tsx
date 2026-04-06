@@ -111,11 +111,13 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animRef = useRef<number>(0);
+  // Smoothed bar values persist between frames so bars decay gracefully
+  const smoothedRef = useRef<number[]>(STATIC_BARS.slice());
 
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [freqBars, setFreqBars] = useState<number[]>(STATIC_BARS);
+  const [bars, setBars] = useState<number[]>(STATIC_BARS);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -125,7 +127,8 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
     const onEnded = () => {
       setPlaying(false);
       cancelAnimationFrame(animRef.current);
-      setFreqBars(STATIC_BARS);
+      smoothedRef.current = STATIC_BARS.slice();
+      setBars(STATIC_BARS);
     };
     audio.addEventListener("timeupdate", onTime);
     audio.addEventListener("loadedmetadata", onMeta);
@@ -145,8 +148,8 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
     const ctx = new AudioContext();
     const source = ctx.createMediaElementSource(audio);
     const analyser = ctx.createAnalyser();
-    analyser.fftSize = 256;
-    analyser.smoothingTimeConstant = 0.8;
+    // Large fftSize gives more time-domain samples to work with (2048 → 2048 samples)
+    analyser.fftSize = 2048;
     source.connect(analyser);
     analyser.connect(ctx.destination);
     audioCtxRef.current = ctx;
@@ -155,14 +158,29 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
 
   function startAnimation() {
     const analyser = analyserRef.current!;
-    const data = new Uint8Array(analyser.frequencyBinCount);
+    // Time-domain data: raw PCM amplitude values (0–255, 128 = silence)
+    const data = new Uint8Array(analyser.fftSize);
+    const BAR_COUNT = 60;
+    const chunkSize = Math.floor(data.length / BAR_COUNT);
+    const DECAY = 0.88; // bars fall off at ~12% per frame rather than snapping to zero
+
     function tick() {
-      analyser.getByteFrequencyData(data);
-      const bars = Array.from({ length: 60 }, (_, i) => {
-        const idx = Math.floor(Math.pow(i / 60, 1.4) * data.length);
-        return data[Math.min(idx, data.length - 1)] / 255;
+      analyser.getByteTimeDomainData(data);
+
+      const next = smoothedRef.current.map((prev, i) => {
+        // RMS amplitude for this bar's chunk of samples
+        let sum = 0;
+        for (let j = 0; j < chunkSize; j++) {
+          const s = (data[i * chunkSize + j] - 128) / 128; // −1 to 1
+          sum += s * s;
+        }
+        const rms = Math.sqrt(sum / chunkSize);
+        // Hold the peak, decay if the new value is quieter
+        return Math.max(rms, prev * DECAY);
       });
-      setFreqBars(bars);
+
+      smoothedRef.current = next;
+      setBars([...next]);
       animRef.current = requestAnimationFrame(tick);
     }
     tick();
@@ -174,7 +192,8 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
       audio.pause();
       setPlaying(false);
       cancelAnimationFrame(animRef.current);
-      setFreqBars(STATIC_BARS);
+      smoothedRef.current = STATIC_BARS.slice();
+      setBars(STATIC_BARS);
     } else {
       initAudioContext();
       // Always resume — Safari and some Chrome versions start AudioContext
@@ -241,8 +260,8 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
             />
           )}
           {/* Bars */}
-          {freqBars.map((amp, i) => {
-            const isPlayed = (i + 0.5) / freqBars.length < progress;
+          {bars.map((amp, i) => {
+            const isPlayed = (i + 0.5) / bars.length < progress;
             return (
               <div
                 key={i}
@@ -252,7 +271,6 @@ function AudioViewer({ title, src }: { title: string; src: string }) {
                   backgroundColor: isPlayed
                     ? "rgba(196,154,60,0.85)"
                     : "rgba(196,154,60,0.25)",
-                  transition: playing ? "height 80ms ease-out" : "none",
                 }}
               />
             );
