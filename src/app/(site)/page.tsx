@@ -56,7 +56,7 @@ export default async function HomePage() {
 
         {/* Season image — full-bleed on desktop/tablet, top band on mobile */}
         {currentSeason?.image_url && (
-          <div className="absolute top-0 left-0 right-0 h-[55%] overflow-hidden pointer-events-none md:inset-0 md:h-auto" style={{ zIndex: -1 }}>
+          <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: -1 }}>
             <img
               src={currentSeason.image_url}
               alt={currentSeason.title}
