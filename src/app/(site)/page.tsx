@@ -51,16 +51,15 @@ export default async function HomePage() {
       <header className="min-h-[90vh] flex flex-col justify-end px-12 pb-20 relative border-b border-rule overflow-hidden max-md:px-6 max-md:min-h-[70vh] max-md:pt-16">
         <div className="absolute top-[-8%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse,rgba(196,154,60,0.05)_0%,transparent_68%)] pointer-events-none" />
 
-        {/* Season image — right half panel, desktop only */}
+        {/* Season image — full-bleed behind content, desktop only */}
         {currentSeason?.image_url && (
-          <div className="absolute right-0 inset-y-0 w-1/2 overflow-hidden pointer-events-none max-md:hidden" style={{ zIndex: -1 }}>
+          <div className="absolute inset-0 overflow-hidden pointer-events-none max-md:hidden" style={{ zIndex: -1 }}>
             <img
               src={currentSeason.image_url}
               alt={currentSeason.title}
               className="w-full h-full object-cover object-center"
               draggable={false}
             />
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(14,12,10,1)_0%,rgba(14,12,10,0.5)_35%,rgba(14,12,10,0)_70%)]" />
           </div>
         )}
 
