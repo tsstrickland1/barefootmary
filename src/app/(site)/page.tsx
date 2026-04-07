@@ -68,7 +68,7 @@ export default async function HomePage() {
 
         {/* Mobile image fade — blends image band into dark background */}
         {currentSeason?.image_url && (
-          <div className="absolute top-0 left-0 right-0 h-[65%] pointer-events-none md:hidden z-[1] bg-[linear-gradient(to_bottom,transparent_40%,#0e0c0a_100%)]" />
+          <div className="absolute inset-0 pointer-events-none md:hidden z-[1] bg-[linear-gradient(to_bottom,transparent_40%,#0e0c0a_100%)]" />
         )}
 
         {/* Season numeral watermark */}
