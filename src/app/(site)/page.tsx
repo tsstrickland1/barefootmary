@@ -52,7 +52,7 @@ export default async function HomePage() {
         <div className="absolute top-[-8%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse,rgba(196,154,60,0.05)_0%,transparent_68%)] pointer-events-none" />
 
         {/* Left-edge scrim — desktop/tablet only, fades text side of image */}
-        <div className="absolute inset-0 pointer-events-none max-md:hidden bg-[linear-gradient(to_right,rgba(14,12,10,0.5)_0%,transparent_60%)]" />
+        <div className="absolute inset-0 pointer-events-none max-md:hidden z-[1] bg-[linear-gradient(to_right,rgba(14,12,10,0.65)_0%,transparent_60%)]" />
 
         {/* Season image — full-bleed on desktop/tablet, top band on mobile */}
         {currentSeason?.image_url && (
@@ -68,16 +68,18 @@ export default async function HomePage() {
 
         {/* Mobile image fade — blends image band into dark background */}
         {currentSeason?.image_url && (
-          <div className="absolute top-0 left-0 right-0 h-[65%] pointer-events-none md:hidden bg-[linear-gradient(to_bottom,transparent_40%,#0e0c0a_100%)]" />
+          <div className="absolute top-0 left-0 right-0 h-[65%] pointer-events-none md:hidden z-[1] bg-[linear-gradient(to_bottom,transparent_40%,#0e0c0a_100%)]" />
         )}
 
         {/* Season numeral watermark */}
         {currentSeason && (
-          <span className="absolute right-[-0.08em] top-[-0.2em] font-display text-[20rem] font-light text-[rgba(196,154,60,0.035)] leading-none pointer-events-none select-none max-md:text-[10rem]">
+          <span className="absolute right-[-0.08em] top-[-0.2em] font-display text-[20rem] font-light text-[rgba(196,154,60,0.035)] leading-none pointer-events-none select-none max-md:text-[10rem] z-[2]">
             {currentSeason.numeral}
           </span>
         )}
 
+        {/* Content — positioned above gradient overlays via z-index */}
+        <div className="relative z-[2]">
         {currentSeason ? (
           <>
             <div className="font-label text-[0.68rem] font-medium tracking-[0.28em] uppercase text-amber mb-5">
@@ -140,6 +142,7 @@ export default async function HomePage() {
               </a>
             ))}
           </div>
+        </div>
         </div>
       </header>
 
