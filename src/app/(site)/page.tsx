@@ -48,7 +48,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ── Hero (with current season) ── */}
-      <header className="lg:min-h-[88vh] md:max-lg:min-h-[65vh] max-md:min-h-[60vh] flex flex-col justify-end px-12 pb-20 relative border-b border-rule overflow-hidden max-md:px-6 max-md:pt-16 md:pt-[72px]">
+      <header className="lg:min-h-[88vh] md:max-lg:min-h-[65vh] max-md:min-h-[60vh] flex flex-col justify-end px-12 pb-20 relative border-b border-rule overflow-hidden max-md:px-6 max-md:pt-16 md:mt-[73px]">
         <div className="absolute top-[-8%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse,rgba(196,154,60,0.05)_0%,transparent_68%)] pointer-events-none" />
 
         {/* Left-edge scrim — desktop/tablet only, fades text side of image */}
