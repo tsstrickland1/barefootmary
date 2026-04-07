@@ -103,6 +103,17 @@ export default async function ArticlePage({
         {byline}
       </div>
 
+      {article.image_url && (
+        <div className="mb-10 overflow-hidden">
+          <img
+            src={article.image_url}
+            alt={article.title}
+            className="w-full object-cover"
+            draggable={false}
+          />
+        </div>
+      )}
+
       {/* Article body */}
       <div className="space-y-6">
         {article.excerpt ? (
