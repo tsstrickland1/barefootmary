@@ -48,12 +48,15 @@ export default async function HomePage() {
   return (
     <>
       {/* ── Hero (with current season) ── */}
-      <header className="min-h-[90vh] flex flex-col justify-end px-12 pb-20 relative border-b border-rule overflow-hidden max-md:px-6 max-md:min-h-[70vh] max-md:pt-16">
+      <header className="lg:min-h-[88vh] md:max-lg:min-h-[65vh] max-md:min-h-[60vh] flex flex-col justify-end px-12 pb-20 relative border-b border-rule overflow-hidden max-md:px-6 max-md:pt-16">
         <div className="absolute top-[-8%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[radial-gradient(ellipse,rgba(196,154,60,0.05)_0%,transparent_68%)] pointer-events-none" />
 
-        {/* Season image — full-bleed behind content, desktop only */}
+        {/* Left-edge scrim — desktop/tablet only, fades text side of image */}
+        <div className="absolute inset-0 pointer-events-none max-md:hidden bg-[linear-gradient(to_right,rgba(14,12,10,0.5)_0%,transparent_60%)]" />
+
+        {/* Season image — full-bleed on desktop/tablet, top band on mobile */}
         {currentSeason?.image_url && (
-          <div className="absolute inset-0 overflow-hidden pointer-events-none max-md:hidden" style={{ zIndex: -1 }}>
+          <div className="absolute top-0 left-0 right-0 h-[55%] overflow-hidden pointer-events-none md:inset-0 md:h-auto" style={{ zIndex: -1 }}>
             <img
               src={currentSeason.image_url}
               alt={currentSeason.title}
@@ -61,6 +64,11 @@ export default async function HomePage() {
               draggable={false}
             />
           </div>
+        )}
+
+        {/* Mobile image fade — blends image band into dark background */}
+        {currentSeason?.image_url && (
+          <div className="absolute top-0 left-0 right-0 h-[65%] pointer-events-none md:hidden bg-[linear-gradient(to_bottom,transparent_40%,#0e0c0a_100%)]" />
         )}
 
         {/* Season numeral watermark */}
