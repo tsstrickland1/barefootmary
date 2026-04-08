@@ -19,12 +19,39 @@ export function StoryForm() {
       formData.append("audio_recording", recordedBlob, "recording.webm");
     }
 
-    // TODO: POST to /api/submissions when Supabase storage is wired up
-    // For now, simulate a successful submission
-    await new Promise((r) => setTimeout(r, 1000));
-    setSubmitState("success");
-    formRef.current?.reset();
-    setRecordedBlob(null);
+    try {
+      const res = await fetch("/api/submissions", { method: "POST", body: formData });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? "Submission failed. Please try again.");
+      }
+      setSubmitState("success");
+      formRef.current?.reset();
+      setRecordedBlob(null);
+    } catch (err) {
+      console.error(err);
+      setSubmitState("error");
+    }
+  }
+
+  if (submitState === "error") {
+    return (
+      <div className="flex flex-col gap-5 py-10 text-center">
+        <div className="font-label text-[0.65rem] tracking-[0.22em] uppercase text-[#e07070]">
+          Something went wrong
+        </div>
+        <p className="text-[0.87rem] text-cream-dim leading-[1.88] font-body max-w-[340px] mx-auto">
+          Your story couldn&apos;t be submitted. Please try again.
+        </p>
+        <button
+          type="button"
+          onClick={() => setSubmitState("idle")}
+          className="font-label text-[0.65rem] tracking-[0.16em] uppercase text-cream-dim hover:text-cream transition-colors duration-200 mt-2"
+        >
+          Try again →
+        </button>
+      </div>
+    );
   }
 
   if (submitState === "success") {
