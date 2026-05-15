@@ -134,7 +134,7 @@ export function Nav() {
           <Image src="/logo.svg" alt="Barefoot Mary" width={120} height={32} priority />
         </Link>
 
-        {/* Right: nav links + CTA — desktop only; hidden on mobile */}
+        {/* Right: nav links + CTA + WUWF — desktop only; hidden on mobile */}
         <div className="hidden md:flex items-center gap-6">
           {/* Nav links — left-anchored (close to logo) */}
           {rightNavLinks.map((link) => (
@@ -151,7 +151,7 @@ export function Nav() {
             </Link>
           ))}
 
-          {/* Utility — right-anchored */}
+          {/* Utility — pushed right */}
           <div className="ml-auto flex items-center gap-4">
             {user ? (
               <div ref={dropdownRef} className="relative">
@@ -203,6 +203,12 @@ export function Nav() {
             >
               Subscribe
             </Link>
+          </div>
+
+          {/* WUWF attribution — far right */}
+          <div className="flex flex-col items-end gap-0.5 border-l border-border pl-4">
+            <span className="font-label text-[0.47rem] tracking-[0.18em] uppercase text-cream-dim">A project of</span>
+            <Image src="/wuwf-logo.svg" alt="WUWF 88.1 Public Media" width={80} height={30} className="opacity-75" />
           </div>
         </div>
       </nav>
