@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const footerColumns = [
@@ -68,6 +69,25 @@ export function Footer() {
           </div>
         ))}
       </footer>
+
+      {/* WUWF partnership strip */}
+      <div className="mx-12 mb-6 border border-border px-8 py-6 flex flex-col sm:flex-row items-center gap-6">
+        <div className="shrink-0">
+          <Image src="/wuwf-logo.svg" alt="WUWF 88.1 Public Media" width={100} height={38} className="opacity-90" />
+        </div>
+        <p className="font-body text-[0.78rem] italic text-cream-dim leading-[1.7]">
+          <span className="not-italic font-semibold text-cream">A production of WUWF 88.1.</span>{" "}
+          Barefoot Mary is produced in partnership with WUWF Public Media at the University of West Florida, NPR for Florida&rsquo;s Great Northwest.
+        </p>
+        <a
+          href="https://wuwf.org"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="shrink-0 font-label text-[0.62rem] tracking-[0.15em] uppercase text-amber no-underline hover:text-amber-light transition-colors duration-200 whitespace-nowrap"
+        >
+          WUWF.ORG ↗
+        </a>
+      </div>
 
       <div className="px-12 py-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="font-label text-[0.62rem] tracking-[0.1em] text-[rgba(158,146,120,0.55)]">
