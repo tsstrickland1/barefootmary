@@ -208,7 +208,7 @@ export function Nav() {
           {/* WUWF attribution — far right */}
           <div className="flex flex-col items-end gap-0.5 border-l border-border pl-4">
             <span className="font-label text-[0.47rem] tracking-[0.18em] uppercase text-cream-dim">A project of</span>
-            <Image src="/wuwf-logo.svg" alt="WUWF 88.1 Public Media" width={62} height={23} className="opacity-75" />
+            <Image src="/wuwf-logo.svg" alt="WUWF 88.1 Public Media" width={80} height={30} className="opacity-75" />
           </div>
         </div>
       </nav>

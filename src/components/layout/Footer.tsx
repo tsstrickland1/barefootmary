@@ -41,7 +41,7 @@ export function Footer() {
           </div>
           <p className="font-body text-[0.82rem] italic text-cream-dim leading-[1.75] max-w-[240px] mb-4">
             An investigative history podcast rooted in Pensacola and the wider
-            Gulf Coast, produced at WUWF.
+            Gulf Coast. A project of WUWF.
           </p>
           <div className="font-label text-[0.6rem] tracking-[0.2em] uppercase text-cream-dim flex items-center gap-2">
             <span className="block w-[18px] h-px bg-amber-dim" />
@@ -70,14 +70,13 @@ export function Footer() {
         ))}
       </footer>
 
-      {/* WUWF partnership strip */}
+      {/* WUWF strip */}
       <div className="mx-12 mb-6 border border-border px-8 py-6 flex flex-col sm:flex-row items-center gap-6">
         <div className="shrink-0">
-          <Image src="/wuwf-logo.svg" alt="WUWF 88.1 Public Media" width={100} height={38} className="opacity-90" />
+          <Image src="/wuwf-logo.svg" alt="WUWF 88.1 Public Media" width={140} height={54} className="opacity-90" />
         </div>
         <p className="font-body text-[0.78rem] italic text-cream-dim leading-[1.7]">
-          <span className="not-italic font-semibold text-cream">A production of WUWF 88.1.</span>{" "}
-          Barefoot Mary is produced in partnership with WUWF Public Media at the University of West Florida, NPR for Florida&rsquo;s Great Northwest.
+          Barefoot Mary is a project of WUWF Public Media at the University of West Florida, NPR for Florida&rsquo;s Great Northwest.
         </p>
         <a
           href="https://wuwf.org"
