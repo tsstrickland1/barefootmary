@@ -205,11 +205,16 @@ export function Nav() {
             </Link>
           </div>
 
-          {/* WUWF attribution — far right */}
-          <div className="flex flex-col items-end gap-0.5 border-l border-border pl-4">
+          {/* WUWF attribution — far right, desktop only */}
+          <a
+            href="https://wuwf.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col items-end gap-0.5 border-l border-border pl-4 no-underline"
+          >
             <span className="font-label text-[0.47rem] tracking-[0.18em] uppercase text-cream-dim">A project of</span>
-            <Image src="/wuwf-logo.svg" alt="WUWF 88.1 Public Media" width={80} height={30} className="opacity-75" />
-          </div>
+            <Image src="/wuwf-logo.svg" alt="WUWF 88.1 Public Media" width={80} height={30} className="opacity-75 transition-opacity duration-200 hover:opacity-100" />
+          </a>
         </div>
       </nav>
 
@@ -296,6 +301,16 @@ export function Nav() {
                 Admin Dashboard
               </Link>
             )}
+            <a
+              href="https://wuwf.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-4 pt-4 mt-1 border-t border-border no-underline"
+              onClick={() => setIsOpen(false)}
+            >
+              <Image src="/wuwf-logo.svg" alt="WUWF 88.1 Public Media" width={90} height={34} className="opacity-75" />
+              <span className="font-label text-[0.58rem] tracking-[0.15em] uppercase text-cream-dim">A project of WUWF</span>
+            </a>
           </div>
         </div>
       )}
