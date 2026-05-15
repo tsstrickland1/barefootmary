@@ -72,9 +72,9 @@ export function Footer() {
 
       {/* WUWF strip */}
       <div className="mx-12 mb-6 border border-border px-8 py-6 flex flex-col sm:flex-row items-center gap-6">
-        <div className="shrink-0">
-          <Image src="/wuwf-logo.svg" alt="WUWF 88.1 Public Media" width={140} height={54} className="opacity-90" />
-        </div>
+        <a href="https://wuwf.org" target="_blank" rel="noopener noreferrer" className="shrink-0 no-underline">
+          <Image src="/wuwf-logo.svg" alt="WUWF 88.1 Public Media" width={140} height={54} className="opacity-90 transition-opacity duration-200 hover:opacity-100" />
+        </a>
         <p className="font-body text-[0.78rem] italic text-cream-dim leading-[1.7]">
           Barefoot Mary is a project of WUWF Public Media at the University of West Florida, NPR for Florida&rsquo;s Great Northwest.
         </p>
